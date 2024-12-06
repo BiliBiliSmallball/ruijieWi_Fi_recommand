@@ -23,7 +23,7 @@ def log_message(message):
         log_file.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - {message}\n")
 
 def manual_check():
-    input("按任意键进行手动检测Wi-Fi连接...")
+    input("按Enter进行手动检测Wi-Fi连接...")
     if not is_wifi_connected():
         print("Wi-Fi is disconnected. Attempting to reconnect...")
         connect_to_wifi(ssid)
