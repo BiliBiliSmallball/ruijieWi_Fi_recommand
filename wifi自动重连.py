@@ -74,9 +74,10 @@ def main():
         time.sleep(sleep_time)  # 根据时间调整检测频率
         manual_check()  # 手动检测功能
 
-try:
-    if __name__ == "__main__":
+if __name__ == "__main__":
+    print("Starting Wi-Fi reconnection service. press Ctrl+C to exit.")
+    try:
         main()
-except KeyboardInterrupt as reason:
-    print("结束运行。")
-    log_message("Script terminated by user.")
+    except KeyboardInterrupt:
+        print("\n服务截止")
+        log_message("Script terminated by user.")
