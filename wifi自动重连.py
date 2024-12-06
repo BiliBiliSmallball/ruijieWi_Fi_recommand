@@ -80,4 +80,4 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         print("\n服务截止")
-        log_message("Script terminated by user.")
+        log_message("Script terminated by user.\n---------------------------------------")
