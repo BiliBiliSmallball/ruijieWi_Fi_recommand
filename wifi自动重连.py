@@ -58,7 +58,7 @@ async def manual_check():
         if is_wifi_connected(): 
             print("Reconnected successfully.") 
             reconnect_count += 1 
-            log_message(0, f"Manual reconnect successful. Reconnect count: {reconnect_count}") 
+            log_message(1, f"Manual reconnect successful. Reconnect count: {reconnect_count}") 
         else: 
             print("Failed to reconnect.") 
             log_message(1, "Manual reconnect failed.") 
@@ -71,11 +71,11 @@ def main():
 
     while True:
         t = time.localtime()
-        # sleep_time = 10  # 夜间每10秒检测一次
-        if 15 <= t.tm_hour or t.tm_hour <= 2:
-            sleep_time = 10  # 夜间每10秒检测一次
-        else:
-            sleep_time = 1200  # 白天每20分钟检测一次
+        sleep_time = 10  # 测试每10秒检测一次
+        # if 15 <= t.tm_hour or t.tm_hour <= 2:
+        #     sleep_time = 10  # 夜间每10秒检测一次
+        # else:
+        #     sleep_time = 1200  # 白天每20分钟检测一次
 
         if not is_wifi_connected():
             print("Wi-Fi is disconnected. Attempting to reconnect...")
@@ -84,7 +84,7 @@ def main():
             if is_wifi_connected():
                 print("Reconnected successfully.")
                 reconnect_count += 1
-                log_message(0, f"Automatic reconnect successful. Reconnect count: {reconnect_count}")
+                log_message(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}")
             else:
                 print("Failed to reconnect.")
                 log_message(1, "Automatic reconnect failed.")
