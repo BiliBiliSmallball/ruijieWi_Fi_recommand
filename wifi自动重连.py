@@ -44,7 +44,7 @@ def main():
 
     while True:
         t = time.localtime()
-        if 16 <= t.tm_hour < 2 or (t.tm_hour < 16 and t.tm_hour >= 2):
+        if 16 <= t.tm_hour or t.tm_hour <= 2:
             sleep_time = 10  # 夜间每10秒检测一次
         else:
             sleep_time = 1200  # 白天每20分钟检测一次
@@ -72,7 +72,7 @@ def main():
         
         print(f"运行时间：{t.tm_hour}：{t.tm_min}：{t.tm_sec}\n")
         time.sleep(sleep_time)  # 根据时间调整检测频率
-        manual_check()  # 手动检测功能
+        #manual_check()  # 手动检测功能
 
 if __name__ == "__main__":
     print("Starting Wi-Fi reconnection service. press Ctrl+C to exit.")
