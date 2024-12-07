@@ -56,3 +56,7 @@ Reconnection attempts: 0
 Run count: 1  
 运行时间：16:00:00
 ```
+
+## 特别鸣谢 && 支持 && 来源
+- ![使用zerotier实现免费上网](./使用zerotier实现免费上网%20-%20Yet%20Another%20何榜文's%20Blog.pdf)
+- > 虽然我的环境好像不需要zerotier。
