@@ -13,7 +13,7 @@ import os
 # 定义常量
 LOG_FILE = "wifi_reconnect_log.txt"
 ERR_LOG_FILE = "./err_log.txt"
-LOG_CLEAR_THRESHOLD = 10
+LOG_CLEAR_THRESHOLD = 2000
 
 def is_wifi_connected():
     # 检查Wi-Fi是否连接
@@ -41,7 +41,7 @@ def log_message(level:bool, message:str,log_file:str):
     else:
         log_file.write(f"[warning] {log_entry}")
 
-def err_dispose(log_path:str, err_log_path:str):
+def err_dispose(log_path:str, err_log_path:str,clear_count:int):
     """错误日志处理函数，将错误日志写入到单独的文件中，并删除原始日志文件
     Args:
         log_path (str): 原始日志文件路径
@@ -51,6 +51,8 @@ def err_dispose(log_path:str, err_log_path:str):
         for line in log_file:
             if '[warning]' in line:
                 err_log.write(line)
+        
+        err_log.write(f"------错误记录第 {clear_count} 次--------\n")
     os.remove(log_path)
 
 async def manual_check():
@@ -68,31 +70,32 @@ def log_delet(log_file_path, err_log_path, clear_count):
     err_log_path (str): 错误日志文件的路径。
     clear_count (int): 日志已被清理的次数。
     """
-    if clear_count >= LOG_CLEAR_THRESHOLD:
-        err_dispose(log_file_path, err_log_path)
-        with open(log_file_path, "w") as log_file:
-            pass  # 清空文件
-        log_message(1, f"Log cleared automatically. Log clear count: {clear_count}", open(log_file_path, "a"))
+    err_dispose(log_file_path, err_log_path,clear_count)
+    with open(log_file_path, "w") as log_file:
+        pass  # 清空文件
+    log_message(1, f"Log cleared automatically. Log clear count: {clear_count}", open(log_file_path, "a"))
+        
+    return None
 
 def main(ssid):
     reconnect_count = 0
     run_count = 0
-    log_clear_count = 0
+    log_clear_count = 1
 
     while True:
         t = time.localtime()
         sleep_time = 10 if 15 <= t.tm_hour or t.tm_hour <= 2 else 1200
 
         if not is_wifi_connected():
-            print("Wi-Fi is disconnected. Attempting to reconnect...")
+            print("Wi-Fi已断开连接，尝试重新连接...")
             connect_to_wifi(ssid)
             time.sleep(5)
             if is_wifi_connected():
-                print("Reconnected successfully.")
+                print("重新连接成功。")
                 reconnect_count += 1
                 log_message(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", open(LOG_FILE, "a"))
             else:
-                print("Failed to reconnect.")
+                print("重新连接失败。")
                 log_message(1, "Automatic reconnect failed.", open(LOG_FILE, "a"))
         else:
             print("Wi-Fi is connected.")
@@ -101,14 +104,14 @@ def main(ssid):
         run_count += 1
         log_message(0, f"Run count: {run_count}", open(LOG_FILE, "a"))
 
-        print(f"Reconnect count: {reconnect_count}\n")
-        print(f"Run count: {run_count}\n")
-        print(f"Run time: {t.tm_hour}:{t.tm_min}:{t.tm_sec}\n")
+        print(f"重连次数: {reconnect_count}\n") 
+        print(f"运行次数: {run_count}\n") 
+        print(f"运行时间: {t.tm_hour}:{t.tm_min}:{t.tm_sec}\n")
 
-        if run_count >= LOG_CLEAR_THRESHOLD:
+        if run_count >= LOG_CLEAR_THRESHOLD: 
             log_delet(LOG_FILE, ERR_LOG_FILE, log_clear_count)
-            log_clear_count = 0  # 重置日志清除次数
-            run_count = 0  # 重置运行次数
+            log_clear_count += 1
+            run_count = 0 #条数清零
         time.sleep(sleep_time)
 
 if __name__ == "__main__":
