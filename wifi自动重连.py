@@ -13,7 +13,7 @@ import os
 # 定义常量
 LOG_FILE = "wifi_reconnect_log.txt"
 ERR_LOG_FILE = "./err_log.txt"
-LOG_CLEAR_THRESHOLD = 2000
+LOG_CLEAR_THRESHOLD = 10
 
 def is_wifi_connected():
     # 检查Wi-Fi是否连接
@@ -66,9 +66,9 @@ def log_delet(log_file_path, err_log_path, clear_count):
     参数:
     log_file_path (str): 日志文件的路径。
     err_log_path (str): 错误日志文件的路径。
-    log_clear_count (int): 日志已被清理的次数。
+    clear_count (int): 日志已被清理的次数。
     """
-    if clear_count > LOG_CLEAR_THRESHOLD:
+    if clear_count >= LOG_CLEAR_THRESHOLD:
         err_dispose(log_file_path, err_log_path)
         with open(log_file_path, "w") as log_file:
             pass  # 清空文件
@@ -90,7 +90,7 @@ def main(ssid):
             if is_wifi_connected():
                 print("Reconnected successfully.")
                 reconnect_count += 1
-                log_message(0, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", open(LOG_FILE, "a"))
+                log_message(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", open(LOG_FILE, "a"))
             else:
                 print("Failed to reconnect.")
                 log_message(1, "Automatic reconnect failed.", open(LOG_FILE, "a"))

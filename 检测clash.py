@@ -8,3 +8,7 @@ def start_process(process_name):
         print(f"{process_name} is running.")
     else:
         print(f"{process_name} is not running.")
+
+if __name__ == "__main__":
+    process_name = "Clash Verge.exe"
+    start_process(process_name)
