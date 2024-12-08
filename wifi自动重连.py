@@ -53,7 +53,13 @@ def err_dispose(log_path:str, err_log_path:str):
                 err_log.write(line)
     os.remove(log_path)
 
-def log_delet(log_file_path:str, err_log_path:str, log_clear_count:str):
+async def manual_check():
+    """
+    本函数原先是为了进行手动触发检测，现在作废
+    """ 
+    pass
+
+def log_delet(log_file_path, err_log_path, clear_count):
     """
     根据日志清理计数决定是否清理日志文件。
     
@@ -62,31 +68,20 @@ def log_delet(log_file_path:str, err_log_path:str, log_clear_count:str):
     err_log_path (str): 错误日志文件的路径。
     log_clear_count (int): 日志已被清理的次数。
     """
-    if log_clear_count > LOG_CLEAR_THRESHOLD:
+    if clear_count > LOG_CLEAR_THRESHOLD:
         err_dispose(log_file_path, err_log_path)
         with open(log_file_path, "w") as log_file:
             pass  # 清空文件
-        log_message(1, f"Log cleared automatically. Log clear count: {log_clear_count + 1}", open(log_file_path, "a"))
-
-
-async def manual_check():
-    """
-    本函数原先是为了进行手动触发检测，现在作废
-    """ 
-    pass
+        log_message(1, f"Log cleared automatically. Log clear count: {clear_count}", open(log_file_path, "a"))
 
 def main(ssid):
-    reconnect_count = 0# 运行次数统计
+    reconnect_count = 0
     run_count = 0
-    log_delet_tic = 0  # 日志清除次数
+    log_clear_count = 0
 
     while True:
         t = time.localtime()
-
-        if 15 <= t.tm_hour or t.tm_hour <= 2:
-            sleep_time = 10
-        else:
-            sleep_time = 1200
+        sleep_time = 10 if 15 <= t.tm_hour or t.tm_hour <= 2 else 1200
 
         if not is_wifi_connected():
             print("Wi-Fi is disconnected. Attempting to reconnect...")
@@ -110,8 +105,10 @@ def main(ssid):
         print(f"Run count: {run_count}\n")
         print(f"Run time: {t.tm_hour}:{t.tm_min}:{t.tm_sec}\n")
 
-        log_delet(LOG_FILE, ERR_LOG_FILE, log_clear_count)
-        log_clear_count += 1
+        if run_count >= LOG_CLEAR_THRESHOLD:
+            log_delet(LOG_FILE, ERR_LOG_FILE, log_clear_count)
+            log_clear_count = 0  # 重置日志清除次数
+            run_count = 0  # 重置运行次数
         time.sleep(sleep_time)
 
 if __name__ == "__main__":
