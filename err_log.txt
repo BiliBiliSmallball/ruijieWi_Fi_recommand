@@ -1,0 +1,28 @@
+报错：
+[warning] 2024-12-07 17:41:51 - Automatic reconnect failed.
+[warning] 2024-12-07 17:42:06 - Automatic reconnect failed.
+[warning] 2024-12-07 17:42:21 - Automatic reconnect failed.
+[warning] 2024-12-07 17:42:36 - Automatic reconnect failed.
+[warning] 2024-12-07 17:42:51 - Automatic reconnect failed.
+[warning] 2024-12-07 17:43:07 - Automatic reconnect failed.
+[warning] 2024-12-07 17:43:22 - Automatic reconnect failed.
+[warning] 2024-12-07 17:43:37 - Automatic reconnect failed.
+切换：
+[warning] 2024-12-07 18:53:00 - Automatic reconnect failed.
+[warning] 2024-12-07 18:53:15 - Automatic reconnect failed.
+[warning] 2024-12-07 19:10:17 - Automatic reconnect failed.
+[warning] 2024-12-07 19:10:32 - Automatic reconnect failed.
+[warning] 2024-12-07 19:10:47 - Automatic reconnect failed.
+[warning] 2024-12-07 19:11:02 - Automatic reconnect failed.
+
+[warning] 2024-12-07 19:11:14 - Script terminated by user.
+[warning] 2024-12-07 19:18:49 - Automatic reconnect failed.
+[warning] 2024-12-07 19:55:43 - Automatic reconnect failed.
+[warning] 2024-12-07 19:55:48 - Script terminated by user.
+
+[warning] 2024-12-07 21:18:50 - Automatic reconnect successful. Reconnect count: 1
+[warning] 2024-12-07 23:32:56 - Automatic reconnect successful. Reconnect count: 2
+
+[warning] 2024-12-08 02:54:49 - Log cleared automatically. Log clear count: 1
+[warning] 2024-12-08 02:54:59 - Log cleared automatically. Log clear count: 2
+[warning] 2024-12-08 02:55:09 - Log cleared automatically. Log clear count: 3

@@ -1,7 +1,14 @@
+"""
+-*- coding: utf-8 -*-
+@Time    : 2023/7/27 15:07
+@File    : wifi自动重连.py
+@autor   : Ender_Zhu
+@Software: vscode
+@Desc    : 程序的主函数，wifi自动重连，检测的脚本。
+"""
 import subprocess
 import time
 import os
-import asyncio
 
 # 运行次数统计
 reconnect_count = 0
@@ -28,7 +35,7 @@ def log_message(level, message):
             log_file.write(f"[warning] {time.strftime('%Y-%m-%d %H:%M:%S')} - {message}\n")
 
 def err_dispose(log_path):
-    # 逐行读取日志，在提取其中错误的加入err_log.txt中
+    # 逐行读取日志，在提取其中错误的加入err_log.txt中，并清除当前日志内容
     with open(log_path, "r") as log_file:
         lines = log_file.readlines()
     with open("./err_log.txt", "a") as err_log:
@@ -50,20 +57,7 @@ async def manual_check():
     """
     本函数原先是为了进行手动触发检测，现在作废
     """ 
-    input("按Enter进行手动检测Wi-Fi连接...") 
-    if not is_wifi_connected(): 
-        print("Wi-Fi is disconnected. Attempting to reconnect...") 
-        connect_to_wifi(ssid) 
-        await asyncio.sleep(5) # 等待一段时间，让系统尝试连接 
-        if is_wifi_connected(): 
-            print("Reconnected successfully.") 
-            reconnect_count += 1 
-            log_message(1, f"Manual reconnect successful. Reconnect count: {reconnect_count}") 
-        else: 
-            print("Failed to reconnect.") 
-            log_message(1, "Manual reconnect failed.") 
-    else: 
-        print("Wi-Fi is connected.")
+    pass
 
 def main():
     global reconnect_count, run_count
