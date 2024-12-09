@@ -53,7 +53,7 @@ def err_dispose(log_path: str, err_log_path: str, clear_count: int):
 
 def is_clash_running():
     if clash.test_process("clash-verge.exe"):
-        log_message(1, "clash is running", open(LOG_FILE, "a"))
+        log_message(0, "clash is running", open(LOG_FILE, "a"))
         return True
     else: 
         log_message(1, "clash is not running", open(LOG_FILE, "a"))
