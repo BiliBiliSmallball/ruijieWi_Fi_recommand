@@ -100,7 +100,7 @@ def main(ssid: str):
         run_count += 1 
         log_message(0, f"Run count: {run_count}", open(LOG_FILE, "a"))
         
-        if run_count // 3 == 0:
+        if run_count % 3 == 0:
             if not is_clash_running():
                 clash.start_process("clash-verge.exe")
         
