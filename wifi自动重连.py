@@ -8,7 +8,7 @@
 """
 import subprocess
 import time
-import os
+import clash_monitor as clash
 
 # 定义常量 
 LOG_FILE = "wifi_reconnect_log.txt" 
@@ -51,10 +51,13 @@ def err_dispose(log_path: str, err_log_path: str, clear_count: int):
                 err_log.write(line) 
         err_log.write(f"------Error logged {clear_count} time--------\n")  
 
-
-async def manual_check(): 
-    """ 本函数原先是为了进行手动触发检测，现在作废 """ 
-    pass 
+def is_clash_running():
+    if clash.test_process("clash-verge.exe"):
+        log_message(1, "clash is running", open(LOG_FILE, "a"))
+        return True
+    else: 
+        log_message(1, "clash is not running", open(LOG_FILE, "a"))
+        return False 
 def log_delet(log_file_path: str, err_log_path: str, clear_count: int): 
     """ 根据日志清理计数决定是否清理日志文件。
     参数: 
@@ -74,9 +77,11 @@ def main(ssid: str):
     log_clear_count = 1
      
     while True: 
+        #日志时间判断
         t = time.localtime() 
         sleep_time = 10 if 15 <= t.tm_hour or t.tm_hour <= 2 else 1200
-         
+        
+        #核心
         if not is_wifi_connected(): 
             print("Wi-Fi已断开连接，尝试重新连接...") 
             connect_to_wifi(ssid) 
@@ -87,18 +92,24 @@ def main(ssid: str):
                 log_message(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", open(LOG_FILE, "a")) 
             else:
                 print("重新连接失败。") 
-                log_message(1, "Automatic reconnect failed.", open(LOG_FILE, "a")) 
+                log_message(1, "Automatic reconnect failed.", open(LOG_FILE, "a"))
         else: 
             print("Wi-Fi已连接。") 
             log_message(0, "Wi-Fi is connection", open(LOG_FILE, "a")) 
         
         run_count += 1 
-        log_message(0, f"Run count: {run_count}", open(LOG_FILE, "a")) 
+        log_message(0, f"Run count: {run_count}", open(LOG_FILE, "a"))
         
+        if run_count // 3 == 0:
+            if not is_clash_running():
+                clash.start_process("clash-verge.exe")
+        
+        #显示
         print(f"重连次数: {reconnect_count}\n") 
         print(f"运行次数: {run_count}\n") 
         print(f"运行时间: {t.tm_hour}:{t.tm_min}:{t.tm_sec}\n") 
         
+        #日志清理
         if run_count >= LOG_CLEAR_THRESHOLD: 
             log_delet(LOG_FILE, ERR_LOG_FILE, log_clear_count) 
             log_clear_count += 1
