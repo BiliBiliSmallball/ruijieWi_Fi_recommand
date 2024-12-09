@@ -13,7 +13,8 @@ import os
 # 定义常量 
 LOG_FILE = "wifi_reconnect_log.txt" 
 ERR_LOG_FILE = "./err_log.txt" 
-LOG_CLEAR_THRESHOLD = 5 
+LOG_CLEAR_THRESHOLD = 1200
+ 
 def is_wifi_connected(): 
     # 检查Wi-Fi是否连接 
     result = subprocess.run(['netsh', 'wlan', 'show', 'interfaces'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) 
@@ -74,7 +75,7 @@ def main(ssid: str):
      
     while True: 
         t = time.localtime() 
-        sleep_time = 3 #if 15 <= t.tm_hour or t.tm_hour <= 2 else 1200
+        sleep_time = 10 if 15 <= t.tm_hour or t.tm_hour <= 2 else 1200
          
         if not is_wifi_connected(): 
             print("Wi-Fi已断开连接，尝试重新连接...") 
