@@ -13,7 +13,7 @@ import clash_monitor as clash
 # 定义常量 
 LOG_FILE = "wifi_reconnect_log.txt" 
 ERR_LOG_FILE = "./err_log.txt" 
-LOG_CLEAR_THRESHOLD = 1200
+LOG_CLEAR_THRESHOLD = 600
  
 def is_wifi_connected(): 
     # 检查Wi-Fi是否连接 
