@@ -1,6 +1,16 @@
 import requests
 from bs4 import BeautifulSoup
 
+def manage_ethernet(action):
+    if action == "disconnect": 
+        # 断开以太网连接
+        subprocess.run(["netsh", "interface", "set", "interface", "name=以太网", "admin=disable"]) 
+    elif action == "connect": 
+        # 连接以太网 
+        subprocess.run(["netsh", "interface", "set", "interface", "name=以太网", "admin=enable"]) 
+    else: 
+        print("Invalid operation, choose 'disconnect' or 'connect'.")
+
 def ruijie_login(url, username, password):
     """
     锐捷认证登录函数。
