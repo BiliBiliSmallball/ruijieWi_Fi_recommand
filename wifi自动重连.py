@@ -57,7 +57,8 @@ def is_clash_running():
         return True
     else: 
         log_message(1, "clash is not running", open(LOG_FILE, "a"))
-        return False 
+        return False
+    
 def log_delet(log_file_path: str, err_log_path: str, clear_count: int): 
     """ 根据日志清理计数决定是否清理日志文件。
     参数: 
@@ -102,7 +103,7 @@ def main(ssid: str):
         
         if run_count % 3 == 0:
             if not is_clash_running():
-                clash.start_process("clash-verge.exe")
+                clash.start_process("C:\\Program Files\\Clash Verge\\clash-verge.exe")
         
         #显示
         print(f"重连次数: {reconnect_count}\n") 

@@ -10,10 +10,19 @@ def test_process(process_name):
     else: 
         print(f"{process_name} 未运行。")
         return False 
-    
+
+def start_process(process_path): 
+    try: 
+        subprocess.Popen([process_path]) 
+        print(f"启动 {process_path} 成功。") 
+    except Exception as e: 
+        print(f"启动 {process_path} 失败: {e}")
+                              
+                              
 if __name__ == "__main__": 
     process_name = "clash-verge.exe"
-    test_process(process_name)  # 确保进程名称与任务列表中显示的完全一致
+    if not test_process(process_name): 
+        start_process("C:\\Program Files\\Clash Verge\\clash-verge.exe")
     test_process('clash-verge-service.exe') 
     
     input("按下Enter键退出")
