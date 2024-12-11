@@ -1,11 +1,13 @@
+import subprocess
 import requests
 from bs4 import BeautifulSoup
+import time
 
 def manage_ethernet(action):
-    if action == "disconnect": 
+    if action == "disconnect" or 'disable' or 'dis': 
         # 断开以太网连接
         subprocess.run(["netsh", "interface", "set", "interface", "name=以太网", "admin=disable"]) 
-    elif action == "connect": 
+    elif action == "connect" or 'enable' or 'en': 
         # 连接以太网 
         subprocess.run(["netsh", "interface", "set", "interface", "name=以太网", "admin=enable"]) 
     else: 
@@ -66,5 +68,10 @@ if __name__ == "__main__":
     username = "20224301003048"
     password = "MTIxMzM0"  # 请确保密码是正确的
 
+    manage_ethernet("disconnect")
+    time.sleep(5)
     # 调用函数进行登录
     login_success = ruijie_login(auth_url, username, password)
+    manage_ethernet("connect")
+
+    time.sleep(5)

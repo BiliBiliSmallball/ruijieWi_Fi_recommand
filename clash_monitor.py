@@ -18,7 +18,14 @@ def start_process(process_path):
     except Exception as e: 
         print(f"启动 {process_path} 失败: {e}")
                               
-                              
+def is_clash_running():
+    if clash.test_process("clash-verge.exe"):
+        log_message(0, "clash is running", open(LOG_FILE, "a"))
+        return True
+    else: 
+        log_message(1, "clash is not running", open(LOG_FILE, "a"))
+        return False
+                         
 if __name__ == "__main__": 
     process_name = "clash-verge.exe"
     if not test_process(process_name): 
