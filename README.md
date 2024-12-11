@@ -10,6 +10,8 @@ Wi_Fi_recommand/
 ├── README.md
 ├── LICENSE
 ├── wifi_reconnect.py
+├── 自动上网.py
+├── __init__.py
 ├── wifi_reconnect_log.txt
 └── err_log.txt
 
