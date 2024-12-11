@@ -4,7 +4,15 @@
 
 这个程序用于自动检测并重连Wi-Fi连接，能够根据时间调整检测频率，并记录每次重连和运行的信息。此外，它还包含一个手动检测Wi-Fi连接的功能，用户可以通过按下Enter键来触发手动检测。
   
-  
+## 项目结构  
+
+Wi_Fi_recommand/
+├── README.md
+├── LICENSE
+├── wifi_reconnect.py
+├── wifi_reconnect_log.txt
+└── err_log.txt
+
 ## 使用方法 1. 克隆本仓库到本地  
  ```bash 
  git clone https://github.com/BiliBiliSmallball/Wi_Fi_recommand.git 
