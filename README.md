@@ -11,7 +11,7 @@ Wi_Fi_recommand/
 ├── LICENSE
 ├── wifi_reconnect.py
 ├── 自动上网.py
-├── __init__.py
+├── main.py
 ├── wifi_reconnect_log.txt
 └── err_log.txt
 
@@ -86,3 +86,6 @@ Run count: 1
 ## 特别鸣谢 && 支持 && 来源
 - ![使用zerotier实现免费上网](./使用zerotier实现免费上网%20-%20Yet%20Another%20何榜文's%20Blog.pdf)
 - > 虽然我的环境好像不需要zerotier。
+
+# 欢迎fork和pr!
+# Forks and PRs are welcome!
