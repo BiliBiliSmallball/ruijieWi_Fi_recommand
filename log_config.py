@@ -11,6 +11,7 @@
 - 将日志消息记录到指定的日志文件中。
 - 处理错误日志，将其从普通日志文件中分离并记录到单独的错误日志文件中。 
 """
+import time
  
 def log_message(level: bool, message: str, log_file: str):
     """将消息记录到日志文件 

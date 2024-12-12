@@ -4,7 +4,7 @@
 @File    : wifi自动重连.py
 @autor   : Ender_Zhu
 @Software: vscode
-@Desc    : 程序的主函数，wifi自动重连，检测的脚本。
+@Desc    : 程序的主函数，wifi自动重连·检测的脚本。
 """
 import subprocess
 import time
@@ -57,7 +57,7 @@ def main(ssid: str):
                 log_config.log_config(1, "Automatic reconnect failed.", open(LOG_FILE, "a"))
         else: 
             print("Wi-Fi已连接。") 
-            log_config.log_config(0, "Wi-Fi is connection", open(LOG_FILE, "a")) 
+            log_config.log_message(0, "Wi-Fi is connection", open(LOG_FILE, "a")) 
         
         run_count += 1 
         log_config.log_message(0, f"Run count: {run_count}", open(LOG_FILE, "a"))
