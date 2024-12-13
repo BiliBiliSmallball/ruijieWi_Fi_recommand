@@ -41,7 +41,7 @@ def main(ssid: str):
     while True: 
         #日志时间判断
         t = time.localtime() 
-        sleep_time = 10 if 15 <= t.tm_hour or t.tm_hour <= 2 else 1200
+        sleep_time = 10 if 14 <= t.tm_hour or t.tm_hour <= 2 else 1200
         
         #核心
         if not is_wifi_connected(): 
@@ -72,7 +72,7 @@ def main(ssid: str):
         print(f"运行时间: {t.tm_hour}:{t.tm_min}:{t.tm_sec}\n") 
         
         #日志清理
-        if run_count >= LOG_CLEAR_THRESHOLD: 
+        if run_count > LOG_CLEAR_THRESHOLD: 
             log_config.log_delet(LOG_FILE, ERR_LOG_FILE, log_clear_count) 
             log_clear_count += 1
             run_count = 0 # 重置运行次数 
@@ -88,3 +88,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\n停止服务") 
         log_config.log_message(1, "用户终止脚本。\n---------------------------------------", open(LOG_FILE, "a"))
+    except:
+        print("\n未知错误。")
+        log_config.log_message(1, "未知错误。\n---------------------------------------", open(LOG_FILE, "a"))
