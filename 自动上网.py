@@ -37,20 +37,20 @@ def ruijie_login(url, username, password):
 
     # 准备表单数据
     form_data = {
-        "userName": username,
-        "userPassword": password,
-        "serviceSuffixId": "-1",
-        "dynamicPwdAuth": "false",
-        "code": "",
-        "codeTime": "",
-        "validateCode": "",
-        "licenseCode": "",
-        "userGroupId": 0,
-        "validationType": 0,
-        "guestManagerId": 19806,
-        "shopIdE": "null",
-        "wlannasid": "null"
-    }
+    "userName": "20224301003048",
+    "userPassword": "MTIxMzM0",
+    "serviceSuffixId": "-1",
+    "dynamicPwdAuth": false,
+    "code": "",
+    "codeTime": "",
+    "validateCode": "",
+    "licenseCode": "",
+    "userGroupId": 0,
+    "validationType": 0,
+    "guestManagerId": 19806,
+    "shopIdE": null,
+    "wlannasid": null
+}
 
     # 提交表单
     login_response = session.post(url, headers=headers, data=form_data)
