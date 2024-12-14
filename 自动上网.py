@@ -16,49 +16,46 @@ def manage_ethernet(action):
         print(f"Error managing Ethernet interface: {e}")
 
 # 锐捷认证登录
-def ruijie_login(url, username, password):
-    headers = {
-        'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
+def login_ruijie(username, password,login_url):
+    # 表单数据，包括用户名和密码以及其他可能需要的隐藏字段
+    data ={
+        "userName": username,
+        "userPassword": password,
+        "serviceSuffixId": "-1",
+        "dynamicPwdAuth": 'false',
+        "code": "",
+        "codeTime": "",
+        "validateCode": "",
+        "licenseCode": "",
+        "userGroupId": 0,
+        "validationType": 0,
+        "guestManagerId": 19806,
+        "shopIdE": 'null',
+        "wlannasid": 'null'
     }
+
+    # 创建一个session对象以保持会话状态
     session = requests.Session()
+
     try:
-        response = session.get(url, headers=headers)
-        soup = BeautifulSoup(response.content, 'html.parser')
+        # 发送POST请求进行登录
+        response = session.post(login_url, data=data)
 
-        form_data = {
-            "userName": username,
-            "userPassword": password,
-            "serviceSuffixId": "-1",
-            "dynamicPwdAuth": 'false',
-            "code": "",
-            "codeTime": "",
-            "validateCode": "",
-            "licenseCode": "",
-            "userGroupId": 0,
-            "validationType": 0,
-            "guestManagerId": 19806,
-            "shopIdE": 'null',
-            "wlannasid": 'null'
-        }
-
-        login_response = session.post(url, headers=headers, data=form_data)
-        if login_response.status_code == 200:
-            print("登录成功")
-            return True
+        # 检查是否登录成功
+        if response.ok and "success" in response.text:
+            print("登录成功！")
         else:
-            print("登录失败，状态码：", login_response.status_code)
-            return False
+            print("登录失败，请检查用户名和密码是否正确。")
+            print(response.text)
     except Exception as e:
-        print(f"登录时出错：{e}")
-        return False
-
+        print(f"发生错误: {e}")
 # 检查WiFi连接状态
 def check_wifi_status():
     wifi_status = os.popen('netsh wlan show interfaces').read()
     return "状态 : 已连接" in wifi_status
 
 # 开始连接过程
-def start_connect(auth_url, username, password):
+def start_connect(auth_url, username, password, ssid):
     manage_ethernet("disconnect")
     time.sleep(5)
     
