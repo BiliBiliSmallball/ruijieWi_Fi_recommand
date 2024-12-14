@@ -1,9 +1,7 @@
-import os
-import time
 import requests
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.common.by import By
+import time
+import os
 
 # 断开或连接以太网
 def manage_ethernet(action):
@@ -17,66 +15,115 @@ def manage_ethernet(action):
     except Exception as e:
         print(f"Error managing Ethernet interface: {e}")
 
+def check_ping(ip, count=1, timeout=1000):
+    """
+    检查IP地址的连通性。
+
+    参数:
+    ip (str): 需要检查的IP地址。
+    count (int, optional): 发送ping请求的次数。默认为1次。
+    timeout (int, optional): 每次ping请求的超时时间（毫秒）。默认为1000毫秒。
+
+    返回:
+    str: 如果ping命令执行成功（返回值为0），则返回'ok'，否则返回'failed'。
+    """
+    # 构建ping命令，'-n'指定发送ping的次数，'-w'指定每次ping的超时时间，'NUL'用于忽略ping命令的输出
+    cmd = 'ping -n %d -w %d %s > NUL' % (count, timeout, ip)
+    # 执行ping命令，返回值为0表示成功，非0表示失败
+    res = os.system(cmd)
+    # 根据ping命令的返回值判断连通性并返回相应状态字符串
+    return 'ok' if res == 0 else 'failed'
+
 # 锐捷认证登录
-def ruijie_login(auth_url, username, password):
-    options = webdriver.EdgeOptions()
-    options.use_chromium = True
-    driver = webdriver.Edge(executable_path='C:\Program Files (x86)\Microsoft\Edge\Application\msedgedriver.exe', options=options)
+def login_ruijie(session, username, password, login_url):
+    # 获取登录页面以提取可能的隐藏字段（如 CSRF Token）
+    response = session.get(login_url)
+    soup = BeautifulSoup(response.text, 'html.parser')
 
-    driver.get(auth_url)
-    time.sleep(2)  # 等待页面加载
+    # 提取隐藏字段
+    hidden_fields = {}
+    for input_tag in soup.find_all('input', type='hidden'):
+        hidden_fields[input_tag['name']] = input_tag.get('value', '')
 
-    # 找到并填写用户名和密码
-    username_input = driver.find_element(By.NAME, "userName")
-    password_input = driver.find_element(By.NAME, "userPassword")
-    username_input.send_keys(username)
-    password_input.send_keys(password)
+    # 表单数据，包括用户名和密码以及其他可能需要的隐藏字段
+    data = {
+        "userName": username,
+        "userPassword": password,
+        "serviceSuffixId": "-1",
+        "dynamicPwdAuth": False,
+        "code": "",
+        "codeTime": "",
+        "validateCode": "",
+        "licenseCode": "",
+        "userGroupId": 0,
+        "validationType": 0,
+        "guestManagerId": 19806,
+        "shopIdE": 'null',
+        "wlannasid": 'null'
+    }
+    data.update(hidden_fields)
 
-    # 找到并点击提交按钮
-    submit_button = driver.find_element(By.NAME, "submit_button_name")
-    submit_button.click()
-    time.sleep(5)  # 等待认证完成
+    try:
+        # 发送POST请求进行登录
+        response = session.post(login_url, data=data)
 
-    # 判断是否登录成功
-    login_success = "登录成功的标志" in driver.page_source
-
-    driver.quit()
-    return login_success
+        if response.status_code == 200:
+            # 尝试获取登录结果
+            query_url = "http://10.30.12.10:30004/byod/byodrs/login/queryResult"
+            query_response = session.get(query_url)
+            
+            # 检查返回的JSON数据
+            if query_response.status_code == 200:
+                result = query_response.json()
+                if result.get("code") == 0 and result.get("msg") == "success":
+                    print("登录成功！")
+                    return True
+                else:
+                    print("登录失败，服务器返回错误信息：", result.get("msg"))
+                    return False
+            else:
+                print("无法获取登录结果，状态码：", query_response.status_code)
+                return False
+        else:
+            print("登录失败，请检查用户名和密码是否正确。")
+            return False
+    except Exception as e:
+        print(f"发生错误: {e}")
+        return False
 
 # 检查WiFi连接状态
 def check_wifi_status():
     wifi_status = os.popen('netsh wlan show interfaces').read()
-    return "状态 : 已连接" in wifi_status
+    if check_ping("10.60.0.1") == "ok":
+        return True
+    else:
+        return False
 
 # 开始连接过程
-def start_connect(auth_url, username, password):
+def start_connect(auth_url, username, password, ssid):
     manage_ethernet("disconnect")
-    time.sleep(3)
-
-    login_success = False
+    time.sleep(5)
+    
+    session = requests.Session()
     while not check_wifi_status():
-        login_success = ruijie_login(auth_url, username, password)
-        if login_success:
+        if login_ruijie(session, username, password, auth_url):
             print("认证成功，等待WiFi连接...")
             time.sleep(5)  # 确保有足够的时间完成WiFi连接
         else:
             print("认证失败，重试中...")
             time.sleep(5)  # 等待几秒后重试
-
-    if login_success:
-        print("WiFi已连接")
-    else:
-        print("WiFi连接失败")
-
+    
+    print("WiFi已连接")
     manage_ethernet("connect")
     time.sleep(5)
 
 def main():
-    auth_url = "http://你的校园网认证网址"
-    username = "你的用户名"
-    password = "你的密码"
+    auth_url = "http://10.30.12.10:30004/byod/byodrs/login/defaultLogin"
+    username = "20224301003048"
+    password = "MTIxMzM0"  # 请确保密码是正确的
+    ssid = "gtxy_wifi"
 
-    start_connect(auth_url, username, password)
+    start_connect(auth_url, username, password, ssid)
 
 if __name__ == '__main__':
     main()

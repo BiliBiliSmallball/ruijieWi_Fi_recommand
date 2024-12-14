@@ -12,4 +12,5 @@ cd /d "%~dp0"
 
 :: 以管理员身份运行Python脚本
 python "cyber_rescue.py"
+
 pause
