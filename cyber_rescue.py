@@ -2,6 +2,21 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import os
+import subprocess
+
+headers = {
+    'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
+    'Accept': 'application/json, text/javascript, */*; q=0.01',
+    'Accept-Encoding': 'gzip, deflate',
+    'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Content-Type': 'application/json',
+    'Origin': 'http://10.30.12.10:30004',
+    'Referer': 'http://10.30.12.10:30004/byod/view/byod/template/templatePc.html?customId=16&usermac=00-13-EF-8F-69-E9&userip=10.60.82.213&userurl=http://www.msftconnecttest.com/redirect&original=http://www.msftconnecttest.com/redirect&ssid=gtxy_wifi&nasRedirectUrl=http://10.30.12.10:30004/byod/index.html?usermac=00-13-EF-8F-69-E9&userip=10.60.82.213&userurl=http://www.msftconnecttest.com/redirect&original=http://www.msftconnecttest.com/redirect&ssid=gtxy_wifi',
+    'X-Requested-With': 'XMLHttpRequest',
+    'Cookie': 'userip=10.60.82.213'
+}
 
 # 断开或连接以太网
 def manage_ethernet(action):
@@ -15,37 +30,40 @@ def manage_ethernet(action):
     except Exception as e:
         print(f"Error managing Ethernet interface: {e}")
 
+# 检查IP地址的连通性
 def check_ping(ip, count=1, timeout=1000):
-    """
-    检查IP地址的连通性。
-
-    参数:
-    ip (str): 需要检查的IP地址。
-    count (int, optional): 发送ping请求的次数。默认为1次。
-    timeout (int, optional): 每次ping请求的超时时间（毫秒）。默认为1000毫秒。
-
-    返回:
-    str: 如果ping命令执行成功（返回值为0），则返回'ok'，否则返回'failed'。
-    """
-    # 构建ping命令，'-n'指定发送ping的次数，'-w'指定每次ping的超时时间，'NUL'用于忽略ping命令的输出
     cmd = 'ping -n %d -w %d %s > NUL' % (count, timeout, ip)
-    # 执行ping命令，返回值为0表示成功，非0表示失败
     res = os.system(cmd)
-    # 根据ping命令的返回值判断连通性并返回相应状态字符串
     return 'ok' if res == 0 else 'failed'
+
+# 检查WiFi连接状态
+def check_wifi_status():
+    try:
+        wifi_status = os.popen('netsh wlan show interfaces').read()
+        if "已连接" in wifi_status:
+            print("Wi-Fi接口已连接")
+            if check_ping("10.60.0.1") == "ok":
+                print("与10.60.0.1的连通性正常")
+                return True
+            else:
+                print("无法连接到10.60.0.1")
+                return False
+        else:
+            print("Wi-Fi接口未连接")
+            return False
+    except Exception as e:
+        print(f"检查WiFi连接状态时发生错误: {e}")
+        return False
 
 # 锐捷认证登录
 def login_ruijie(session, username, password, login_url):
-    # 获取登录页面以提取可能的隐藏字段（如 CSRF Token）
     response = session.get(login_url)
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    # 提取隐藏字段
     hidden_fields = {}
     for input_tag in soup.find_all('input', type='hidden'):
         hidden_fields[input_tag['name']] = input_tag.get('value', '')
 
-    # 表单数据，包括用户名和密码以及其他可能需要的隐藏字段
     data = {
         "userName": username,
         "userPassword": password,
@@ -64,15 +82,10 @@ def login_ruijie(session, username, password, login_url):
     data.update(hidden_fields)
 
     try:
-        # 发送POST请求进行登录
-        response = session.post(login_url, data=data)
-
+        response = session.post(login_url, data=data, headers=headers)
         if response.status_code == 200:
-            # 尝试获取登录结果
             query_url = "http://10.30.12.10:30004/byod/byodrs/login/queryResult"
             query_response = session.get(query_url)
-            
-            # 检查返回的JSON数据
             if query_response.status_code == 200:
                 result = query_response.json()
                 if result.get("code") == 0 and result.get("msg") == "success":
@@ -91,39 +104,41 @@ def login_ruijie(session, username, password, login_url):
         print(f"发生错误: {e}")
         return False
 
-# 检查WiFi连接状态
-def check_wifi_status():
-    wifi_status = os.popen('netsh wlan show interfaces').read()
-    if check_ping("10.60.0.1") == "ok":
+def wifi_connected():
+    result = subprocess.run(['netsh', 'wlan', 'show', 'interfaces'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if "已连接" in result.stdout:
+        print("Wi-Fi已连接\n")
         return True
-    else:
-        return False
+    return False
 
-# 开始连接过程
-def start_connect(auth_url, username, password, ssid):
+def start_connect(auth_url, username, password):
+    tic = 0
     manage_ethernet("disconnect")
-    time.sleep(5)
+    time.sleep(3)
     
+    wifi_connected()
     session = requests.Session()
     while not check_wifi_status():
         if login_ruijie(session, username, password, auth_url):
             print("认证成功，等待WiFi连接...")
-            time.sleep(5)  # 确保有足够的时间完成WiFi连接
+            tic += 1
+            if tic > 3:
+                break
+            time.sleep(5)
         else:
             print("认证失败，重试中...")
-            time.sleep(5)  # 等待几秒后重试
+            time.sleep(5)
     
-    print("WiFi已连接")
     manage_ethernet("connect")
     time.sleep(5)
 
 def main():
     auth_url = "http://10.30.12.10:30004/byod/byodrs/login/defaultLogin"
     username = "20224301003048"
-    password = "MTIxMzM0"  # 请确保密码是正确的
+    password = "MTIxMzM0"
     ssid = "gtxy_wifi"
 
-    start_connect(auth_url, username, password, ssid)
+    start_connect(auth_url, username, password)
 
 if __name__ == '__main__':
     main()
