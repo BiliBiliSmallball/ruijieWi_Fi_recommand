@@ -12,7 +12,19 @@
 - 处理错误日志，将其从普通日志文件中分离并记录到单独的错误日志文件中。 
 """
 import time
- 
+
+def log_conuter(log_file_path: str):
+    """获取日志文件行数
+    Args: 
+    log_file_path (str): 日志文件的路径
+    Returns: 
+    int: 日志文件的行数
+    """
+    with open(log_file_path, "r") as log_file:
+        tic = (len(log_file.readlines())-1) // 2
+        
+    return tic
+
 def log_message(level: bool, message: str, log_file: str):
     """将消息记录到日志文件 
     Args: level (bool): 日志等级：0为正常，1为警告 
@@ -70,4 +82,4 @@ def log_clear_tic_get(err_log_path: str):
     return return_tic
 
 if __name__ == "__main__":
-    pass
+    log_conuter("wifi_reconnect_log.txt")
