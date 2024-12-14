@@ -48,7 +48,7 @@ dataCheck = {
         "guestManagerId": 19806,
         "shopIdE": 'null',
         "wlannasid": 'null'
-    }
+}
 
 #{"code": 0,"msg": "下线成功"}
 
