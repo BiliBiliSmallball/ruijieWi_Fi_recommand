@@ -1,6 +1,8 @@
 import pyautogui
 import os
 import time
+import clash_monitor as clash
+import subprocess 
 
 # 断开或连接以太网
 def manage_ethernet(action):
@@ -18,8 +20,15 @@ def manage_ethernet(action):
     except Exception as e:
         print(f"Error managing Ethernet interface: {e}")
 
+def check_clash():
+    if clash.test_process("clash") == True:
+        subprocess.run(['taskkill', '/F', '/IM',"clash-verge.exe"], check=True)
+
 # 主函数
-def main():
+def main(username,password):
+    #检查clash进程
+    check_clash()
+
     # 断开网口
     manage_ethernet("disconnect")
     
@@ -30,7 +39,7 @@ def main():
     time.sleep(2)  # 等待浏览器打开
 
     # 在地址栏输入地址
-    pyautogui.write('http://example.com')
+    pyautogui.write('http://10.30.12.10:30004/byod/view/byod/byodLogin.html')
     pyautogui.press('enter')
     time.sleep(2)  # 等待页面加载
 
@@ -41,9 +50,9 @@ def main():
 
     if username_location and password_location and login_button_location:
         pyautogui.click(username_location)
-        pyautogui.write('your_username')
+        pyautogui.write(username)
         pyautogui.click(password_location)
-        pyautogui.write('your_password')
+        pyautogui.write(password)
         pyautogui.click(login_button_location)
     else:
         print("Could not locate username or password fields.")
