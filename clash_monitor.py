@@ -11,12 +11,20 @@ def test_process(process_name):
         print(f"{process_name} 未运行。")
         return False 
 
-def start_process(process_path): 
+def start_process(process_path,action="start"): 
     try: 
-        subprocess.Popen([process_path]) 
-        print(f"启动 {process_path} 成功。") 
+        if action == "start": 
+            subprocess.Popen([process_path]) 
+            print(f"启动 {process_path} 成功。") 
+        elif action == "kill": 
+            subprocess.run(['taskkill', '/F', '/IM', process_path], check=True) 
+            print(f"Process {process_path} terminated successfully.") 
+        else: 
+            print("Invalid action. Use 'start' to start a process or 'kill' to terminate a process.") 
+    except subprocess.CalledProcessError as e: 
+        print(f"Failed to terminate process {process_path}: {e}")
     except Exception as e: 
-        print(f"启动 {process_path} 失败: {e}")
+        print(f"Error managing process {process_path}: {e}")
                                                        
 if __name__ == "__main__": 
     process_name = "clash-verge.exe"
