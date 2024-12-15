@@ -87,7 +87,7 @@ if __name__ == "__main__":
         main(ssid) 
     except KeyboardInterrupt:
         print("\n停止服务") 
-        log_config.log_message(1, "用户终止脚本。\n---------------------------------------", open(LOG_FILE, "a"))
+        log_config.log_message(1, "The script is terminated by the user\n---------------------------------------", open(LOG_FILE, "a"))
     except:
         print("\n未知错误。")
-        log_config.log_message(1, "未知错误。\n---------------------------------------", open(LOG_FILE, "a"))
+        log_config.log_message(1, "Unknown error\n---------------------------------------", open(LOG_FILE, "a"))
