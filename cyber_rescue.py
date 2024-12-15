@@ -1,4 +1,4 @@
-import pyautogui
+﻿import pyautogui
 import os
 import time
 import clash_monitor as clash
@@ -30,23 +30,25 @@ def main(username,password):
     check_clash()
 
     # 断开网口
-    manage_ethernet("disconnect")
+    #manage_ethernet("disconnect")
+    print("正在断开网口（测试）")
     
     # 打开浏览器
     pyautogui.hotkey('win', 'r')
-    pyautogui.write('chrome')
+    pyautogui.write('msedge.exe')
     pyautogui.press('enter')
     time.sleep(2)  # 等待浏览器打开
 
     # 在地址栏输入地址
     pyautogui.write('http://10.30.12.10:30004/byod/view/byod/byodLogin.html')
+    pyautogui.click(pyautogui.locateCenterOnScreen('src\\web_click.png'))
     pyautogui.press('enter')
-    time.sleep(2)  # 等待页面加载
+    time.sleep(4)  # 等待页面加载
 
     # 定位用户名和密码输入框，输入预设用户名密码
-    username_location = pyautogui.locateOnScreen('username.png')
-    password_location = pyautogui.locateOnScreen('password.png')
-    login_button_location = pyautogui.locateOnScreen('login_button.png')
+    username_location = pyautogui.locateOnScreen('src\\user.png')
+    password_location = pyautogui.locateOnScreen('src\\password.png')
+    login_button_location = pyautogui.locateOnScreen('src\\login.png')
 
     if username_location and password_location and login_button_location:
         pyautogui.click(username_location)
@@ -58,9 +60,10 @@ def main(username,password):
         print("Could not locate username or password fields.")
 
     # 检测到“下线”按钮重新联接网口
-    offline_button_location = pyautogui.locateOnScreen('offline_button.png')
+    offline_button_location = pyautogui.locateOnScreen('src\sucessful.png')
     if offline_button_location:
-        manage_ethernet("connect")
+        #manage_ethernet("connect")
+        print("正在重连网络（测试）")
 
 if __name__ == '__main__':
-    main()
+    main("20224301003048","121334")
