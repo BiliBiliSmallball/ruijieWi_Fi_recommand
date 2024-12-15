@@ -41,14 +41,18 @@ def main(username,password):
 
     # 在地址栏输入地址
     pyautogui.write('http://10.30.12.10:30004/byod/view/byod/byodLogin.html')
-    pyautogui.click(pyautogui.locateCenterOnScreen('src\\web_click.png'))
+    pyautogui.moveTo(pyautogui.locateCenterOnScreen('src\\web_click.png'))
+    pyautogui.click()
     pyautogui.press('enter')
     time.sleep(4)  # 等待页面加载
 
     # 定位用户名和密码输入框，输入预设用户名密码
-    username_location = pyautogui.locateOnScreen('src\\user.png')
-    password_location = pyautogui.locateOnScreen('src\\password.png')
-    login_button_location = pyautogui.locateOnScreen('src\\login.png')
+    username_location = pyautogui.locateOnScreen('src\\user.png',grayscale=True)
+    print(pyautogui.center(username_location))
+    password_location = pyautogui.locateOnScreen('src\\password.png',grayscale=True)
+    print(pyautogui.center(password_location))
+    login_button_location = pyautogui.locateOnScreen('src\\login.png',grayscale=True)
+    print(pyautogui.center(login_button_location))
 
     if username_location and password_location and login_button_location:
         pyautogui.click(username_location)
