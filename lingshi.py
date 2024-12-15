@@ -16,12 +16,21 @@ header = {
 }
 
 dataLogin = {
-    "code": 0,
-    "msg": "success",
-    "data": {
-        "showLoginDown": True
-    }#上线
+        "userName": "20224301003048",
+        "userPassword": "MTIxMzM0",
+        "serviceSuffixId": "-1",
+        "dynamicPwdAuth": False,
+        "code": "",
+        "codeTime": "",
+        "validateCode": "",
+        "licenseCode": "",
+        "userGroupId": 0,
+        "validationType": 0,
+        "guestManagerId": 19806,
+        "shopIdE": 'null',
+        "wlannasid": 'null'
 }
+
 # = {
 #     'userId': '',     #填写post请求中的账号
 #     'password': '',   #填写post请求中加密过的密码
@@ -52,8 +61,8 @@ dataCheck = {
 
 #{"code": 0,"msg": "下线成功"}
 
-login = "http://10.30.12.10:30004/byod/byodrs/login/defaultLogin"                   #登录地址
-checkStatus = "http://10.30.12.10:30004/byod/byodrs/login/queryResult" #验证地址
+login = "http://10.30.12.10:30004/byod/byodrs/login/defaultLogin"#登录地址
+checkStatus = "http://10.30.12.10:30004/byod/byodrs/login/queryResult"#验证地址
 
 
 def work():
@@ -81,4 +90,4 @@ while(True):
         print(time.asctime(time.localtime(time.time())), "监测出错，请检查网络是否连通。")
         time.sleep(1)
         continue
-    time.sleep(random.randint(20, 40))  #这里间隔20~40秒查询一次状态，切莫太频繁
+    time.sleep(random.randint(20, 40))#这里间隔20~40秒查询一次状态，切莫太频繁
