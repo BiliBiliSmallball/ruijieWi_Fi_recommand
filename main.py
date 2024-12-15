@@ -51,10 +51,10 @@ def main(ssid: str):
             if is_wifi_connected(): 
                 print("重新连接成功。") 
                 reconnect_count += 1 
-                log_config.log_config(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", open(LOG_FILE, "a")) 
+                log_config.log_message(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", open(LOG_FILE, "a")) 
             else:
                 print("重新连接失败。") 
-                log_config.log_config(1, "Automatic reconnect failed.", open(LOG_FILE, "a"))
+                log_config.log_message(1, "Automatic reconnect failed.", open(LOG_FILE, "a"))
         else: 
             print("Wi-Fi已连接。") 
             log_config.log_message(0, "Wi-Fi is connection", open(LOG_FILE, "a")) 
@@ -88,6 +88,8 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\n停止服务") 
         log_config.log_message(1, "The script is terminated by the user\n---------------------------------------", open(LOG_FILE, "a"))
-    except:
-        print("\n未知错误。")
-        log_config.log_message(1, "Unknown error\n---------------------------------------", open(LOG_FILE, "a"))
+    
+    #请在测试时注释掉下面这一行
+    except :
+       print("\n未知错误。")
+       log_config.log_message(1, "Unknown error\n---------------------------------------", open(LOG_FILE, "a"))
