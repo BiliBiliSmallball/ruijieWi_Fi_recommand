@@ -44,11 +44,11 @@ def main(username, password):
 
     try:
         # 定位用户名和密码输入框并输入预设用户名和密码
-        username_field = driver.find_element(By.ID, "id_userName")  # 根据实际情况修改name属性值
+        username_field = driver.find_element(By.ID, "id_userName")
         time.sleep(7)  # 等待页面加载
-        password_field = driver.find_element(By.ID, "id_userPwd")  # 根据实际情况修改name属性值
+        password_field = driver.find_element(By.ID, "id_userPwd")
         time.sleep(7)  # 等待页面加载
-        login_button = driver.find_element(By.ID, "id_lable_loginbutton_auth")  # 根据实际情况修改name属性值
+        login_button = driver.find_element(By.ID, "id_lable_loginbutton_auth")
         
         username_field.send_keys(username)
         password_field.send_keys(password)
