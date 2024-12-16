@@ -1,8 +1,19 @@
 import subprocess 
 
-def is_process_running(process_name): 
-    result = subprocess.run(['tasklist'], stdout=subprocess.PIPE, text=True) 
-    return process_name in result.stdout 
+def is_process_running(process_name):
+    """
+    检查指定进程是否正在运行。
+    该函数通过执行 'tasklist' 命令并检查其输出来确定指定进程是否正在运行。
+    参数:
+    process_name (str): 要检查的进程名称，例如 'notepad.exe'。
+    返回:
+    bool: 如果进程正在运行则返回 True，否则返回 False。
+    """
+    # 执行 'tasklist' 命令并捕获其输出
+    result = subprocess.run(['tasklist'], stdout=subprocess.PIPE, text=True)
+    
+    # 确定指定的进程名称是否存在于 'tasklist' 的输出中
+    return process_name in result.stdout
 def test_process(process_name): 
     if is_process_running(process_name): 
         print(f"{process_name} 正在运行。")
