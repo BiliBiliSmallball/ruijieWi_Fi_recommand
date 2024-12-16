@@ -1,8 +1,10 @@
-﻿import pyautogui
-import os
+﻿from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 import time
+import os
+import subprocess
 import clash_monitor as clash
-import subprocess 
 
 # 断开或连接以太网
 def manage_ethernet(action):
@@ -26,52 +28,44 @@ def check_clash():
             subprocess.run(['taskkill', '/F', '/IM',"clash-verge.exe"], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error killing clash: {e}")
-        #subprocess.run(['taskkill', '/F', '/IM',"clash-verge-service.exe"], check=True)
-# 主函数
-def main(username,password):
-    #检查clash进程
+
+def main(username, password):
+    # 检查Clash进程
     check_clash()
 
-    # 断开网口
-    manage_ethernet("disconnect")
-    #print("正在断开网口（测试）")
-    
-    # 打开浏览器
-    pyautogui.hotkey('win', 'r')
-    pyautogui.write('msedge.exe')
-    pyautogui.press('enter')
-    time.sleep(3)  # 等待浏览器打开
+    # 断开以太网（测试时注释掉）
+    # manage_ethernet("disconnect")
+    print("正在断开网口（测试）")
 
-    # 在地址栏输入地址
-    pyautogui.write('http://10.30.12.10:30004/byod/view/byod/byodLogin.html')
-    pyautogui.moveTo(pyautogui.locateCenterOnScreen('src\\web_click.png'))
-    pyautogui.click(x=1161,y=76)
-    pyautogui.press('enter')
-    time.sleep(5)  # 等待页面加载
+    # 使用Selenium打开浏览器并导航到登录页面
+    driver = webdriver.Edge()#webdriver.Chrome()
+    driver.get("http://10.30.12.10:30004/byod/view/byod/byodLogin.html")
+    time.sleep(7)  # 等待页面加载
 
-    # 定位用户名和密码输入框，输入预设用户名密码
-    username_location = pyautogui.locateOnScreen('src\\user.png',grayscale=True)
-    print(pyautogui.center(username_location))
-    password_location = pyautogui.locateOnScreen('src\\password.png',grayscale=True)
-    print(pyautogui.center(password_location))
-    login_button_location = pyautogui.locateOnScreen('src\\login.png',grayscale=True)
-    print(pyautogui.center(login_button_location))
+    try:
+        # 定位用户名和密码输入框并输入预设用户名和密码
+        username_field = driver.find_element(By.ID, "id_userName")  # 根据实际情况修改name属性值
+        time.sleep(7)  # 等待页面加载
+        password_field = driver.find_element(By.ID, "id_userPwd")  # 根据实际情况修改name属性值
+        time.sleep(7)  # 等待页面加载
+        login_button = driver.find_element(By.ID, "id_lable_loginbutton_auth")  # 根据实际情况修改name属性值
+        
+        username_field.send_keys(username)
+        password_field.send_keys(password)
+        login_button.click()
+    except Exception as e:
+        print(f"Error during login: {e}")
 
-    if username_location and password_location and login_button_location:
-        pyautogui.click(username_location)
-        pyautogui.write(username)
-        pyautogui.click(password_location)
-        pyautogui.write(password)
-        pyautogui.click(login_button_location)
-    else:
-        print("Could not locate username or password fields.")
+    # 检测到“下线”按钮重新连接以太网
+    try:
+        offline_button = driver.find_element(By.ID,"id_logout")
+        if offline_button:
+            # manage_ethernet("connect")
+            print("正在重连网络（测试）")
+    except Exception as e:
+        print(f"Error finding offline button: {e}")
 
-    # 检测到“下线”按钮重新联接网口
-    offline_button_location = pyautogui.locateOnScreen('src\\sucessful.png')
-    if offline_button_location:
-        manage_ethernet("connect")
-        #print("正在重连网络（测试）")
+    driver.quit()
 
 if __name__ == '__main__':
-    main("20224301003048","121334")
-    
+    main("20224301003048", "121334")
