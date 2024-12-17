@@ -41,7 +41,7 @@ def main(ssid: str):
     while True: 
         #日志时间判断
         t = time.localtime() 
-        sleep_time = 10 if 14 <= t.tm_hour or t.tm_hour <= 2 else 1200
+        sleep_time = 10 if 14 <= t.tm_hour or t.tm_hour <= 2 or t.tm_hour == 8 or t.tm_hour == 9 else 1200
         
         #核心
         if not is_wifi_connected(): 

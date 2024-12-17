@@ -1,6 +1,8 @@
 ﻿from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.edge.options import Options as EdgeOptions
+from selenium.webdriver.support import expected_conditions as EC
 import time
 import os
 import subprocess
@@ -31,23 +33,34 @@ def check_clash():
 
 def main(username, password):
     # 检查Clash进程
-    check_clash()
+    #check_clash()
 
     # 断开以太网（测试时注释掉）
     # manage_ethernet("disconnect")
     print("正在断开网口（测试）")
 
+    """设置浏览器选项
+    浏览器选项:
+    edge_options.add_argument('--profile-directory=Default')：指定用户配置文件目录。
+    edge_options.add_argument('start-maximized')：启动时最大化窗口。
+    edge_options.add_argument('--disable-popup-blocking')：禁用弹窗拦截。
+    """
+    edge_options = EdgeOptions()
+    edge_options.add_argument('--profile-directory=Default')
+    edge_options.add_argument('start-maximized')
+    edge_options.add_argument('--disable-popup-blocking')
+
     # 使用Selenium打开浏览器并导航到登录页面
-    driver = webdriver.Edge()#webdriver.Chrome()
+    driver = webdriver.Edge(options=edge_options)
     driver.get("http://10.30.12.10:30004/byod/view/byod/byodLogin.html")
-    time.sleep(7)  # 等待页面加载
+    driver.WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "id_userNamet")))
 
     try:
         # 定位用户名和密码输入框并输入预设用户名和密码
         username_field = driver.find_element(By.ID, "id_userName")
-        time.sleep(7)  # 等待页面加载
+        time.sleep(10)  # 增加等待时间
         password_field = driver.find_element(By.ID, "id_userPwd")
-        time.sleep(7)  # 等待页面加载
+        time.sleep(10)  # 增加等待时间
         login_button = driver.find_element(By.ID, "id_lable_loginbutton_auth")
         
         username_field.send_keys(username)
@@ -58,6 +71,7 @@ def main(username, password):
 
     # 检测到“下线”按钮重新连接以太网
     try:
+        time.sleep(10)  # 增加等待时间
         offline_button = driver.find_element(By.ID,"id_logout")
         if offline_button:
             # manage_ethernet("connect")
