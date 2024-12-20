@@ -8,7 +8,7 @@ LOG_CLEAR_THRESHOLD = 600
 LOG_FILE = "wifi_reconnect_log.txt"
 ERR_LOG_FILE = "./err_log.txt"
 SSID = 'gtxy_wifi'  # 替换为你的Wi-Fi网络名称
-GATEWAY_IP = '192.168.1.1'  # 替换为你指定的网关IP地址
+GATEWAY_IP = '10.60.0.1'  # 替换为你指定的网关IP地址
 
 def is_wifi_connected():
     # 检查Wi-Fi是否连接

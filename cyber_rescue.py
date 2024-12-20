@@ -9,16 +9,16 @@ from log_config import log_message
 # 定义请求头部信息
 headers = {
     'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
-    'Accept': 'application/json, text/javascript, */*; q=0.01',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
     'Accept-Encoding': 'gzip, deflate',
     'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+    'connection':'keep-alive',
     'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
-    'Content-Type': 'application/json',
-    'Origin': 'http://10.30.12.10:30004',
-    'Referer': 'http://10.30.12.10:30004/byod/view/byod/template/templatePc.html?customId=16&usermac=00-13-EF-8F-69-E9&userip=10.60.82.213&userurl=http://www.msftconnecttest.com/redirect&original=http://www.msftconnecttest.com/redirect&ssid=gtxy_wifi&nasRedirectUrl=http://10.30.12.10:30004/byod/index.html?usermac=00-13-EF-8F-69-E9&userip=10.60.82.213&userurl=http://www.msftconnecttest.com/redirect&original=http://www.msftconnecttest.com/redirect&ssid=gtxy_wifi',
-    'X-Requested-With': 'XMLHttpRequest',
-    #'Cookie': 'userip=10.60.82.213'
+    "cookie":"testcookie=yes; userip=10.20.172.199",
+    'host': '10.30.12.10:30004',
+    'pragma':'no-cache',
+    'Referer': 'http://10.30.12.10:30004/byod/index.html?usermac=00-13-EF-5F-40-4A&userip=10.20.172.199&userurl=http://www.msftconnecttest.com/redirect&original=http://www.msftconnecttest.com/redirect&ssid=gtxy_wifi',
+    "upgrade-insecure-requests":1
 }
 
 # 登录和检查状态的数据
@@ -156,7 +156,7 @@ def start_connect(auth_url, username, password, checkStatus, dataCheck):
     time.sleep(5)
 
 def main():
-    auth_url = "http://10.30.12.10:30004/byod/byodrs/login/defaultLogin"
+    auth_url = "http://10.30.12.10:30004/byod/view/byod/byodLogin.html"
     checkStatus = "http://10.30.12.10:30004/byod/byodrs/login/queryResult"
     username = "20224301003048"
     password = "MTIxMzM0"
