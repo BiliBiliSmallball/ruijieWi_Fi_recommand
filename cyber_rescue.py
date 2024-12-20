@@ -18,7 +18,7 @@ headers = {
     'host': '10.30.12.10:30004',
     'pragma':'no-cache',
     'Referer': 'http://10.30.12.10:30004/byod/index.html?usermac=00-13-EF-5F-40-4A&userip=10.20.172.199&userurl=http://www.msftconnecttest.com/redirect&original=http://www.msftconnecttest.com/redirect&ssid=gtxy_wifi',
-    "upgrade-insecure-requests":1
+    "upgrade-insecure-requests": '1'
 }
 
 # 登录和检查状态的数据
@@ -49,6 +49,7 @@ dataCheck = {
 # 断开或连接以太网
 def manage_ethernet(action):
     try:
+        log_message(0, f"正在执行以太网操作: {action}", "wifi_reconnect_log.txt", "cyber_rescue.py")
         if action in ["disconnect", "disable", "dis"]:
             result = os.system('netsh interface set interface "以太网" admin=disable')
             if result != 0:
@@ -64,6 +65,7 @@ def manage_ethernet(action):
 
 # 检查IP地址的连通性
 def check_ping(ip, count=1, timeout=1000):
+    log_message(0, f"正在ping IP地址: {ip}", "wifi_reconnect_log.txt", "cyber_rescue.py")
     cmd = 'ping -n %d -w %d %s' % (count, timeout, ip)
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     output = result.stdout
@@ -74,6 +76,7 @@ def check_ping(ip, count=1, timeout=1000):
 
 # 检查WiFi连接状态
 def check_wifi_status(session, checkStatus, dataCheck):
+    log_message(0, "正在检查WiFi连接状态...", "wifi_reconnect_log.txt", "cyber_rescue.py")
     try:
         response = session.post(url=checkStatus, headers=headers, data=json.dumps(dataCheck), timeout=5)
         response.encoding = 'utf-8'
@@ -98,6 +101,7 @@ def check_wifi_status(session, checkStatus, dataCheck):
 
 # 锐捷认证登录
 def login_ruijie(session, username, password, login_url, dataLogin):
+    log_message(0, "正在尝试登录锐捷...", "wifi_reconnect_log.txt", "cyber_rescue.py")
     try:
         response = session.post(login_url, headers=headers, data=json.dumps(dataLogin), timeout=5)
         response.encoding = 'utf-8'
@@ -122,15 +126,18 @@ def login_ruijie(session, username, password, login_url, dataLogin):
 
 # 检查WiFi是否已连接
 def wifi_connected():
+    log_message(0, "正在检查WiFi是否已连接...", "wifi_reconnect_log.txt", "cyber_rescue.py")
     result = subprocess.run(['netsh', 'wlan', 'show', 'interfaces'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if "已连接" in result.stdout:
-        print("Wi-Fi已连接\n")
+        log_message(0, "Wi-Fi已连接", "wifi_reconnect_log.txt", "cyber_rescue.py")
         return True
+    log_message(1, "Wi-Fi未连接", "wifi_reconnect_log.txt", "cyber_rescue.py")
     return False
 
 # 开始连接
 def start_connect(auth_url, username, password, checkStatus, dataCheck):
     tic = 0
+    log_message(0, "开始连接流程...", "wifi_reconnect_log.txt", "cyber_rescue.py")
     manage_ethernet("disconnect")
     time.sleep(3)
     
@@ -161,7 +168,9 @@ def main():
     username = "20224301003048"
     password = "MTIxMzM0"
 
+    log_message(0, "程序开始运行...", "wifi_reconnect_log.txt", "cyber_rescue.py")
     start_connect(auth_url, username, password, checkStatus, dataCheck)
+    log_message(0, "程序运行结束。", "wifi_reconnect_log.txt", "cyber_rescue.py")
 
 if __name__ == '__main__':
     main()
