@@ -5,6 +5,7 @@ import os
 import subprocess
 import json
 
+# 定义请求头部信息
 headers = {
     'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
     'Accept': 'application/json, text/javascript, */*; q=0.01',
@@ -19,6 +20,7 @@ headers = {
     'Cookie': 'userip=10.60.82.213'
 }
 
+# 登录和检查状态的数据
 dataLogin = {
     "code": 0,
     "msg": "success",
@@ -72,7 +74,7 @@ def check_ping(ip, count=1, timeout=1000):
 # 检查WiFi连接状态
 def check_wifi_status(session, checkStatus, dataCheck):
     try:
-        response = session.post(url=checkStatus, headers=headers, data=dataCheck, timeout=5)
+        response = session.post(url=checkStatus, headers=headers, data=json.dumps(dataCheck), timeout=5)
         response.encoding = 'utf-8'
         content = response.text
         try:
@@ -96,7 +98,7 @@ def check_wifi_status(session, checkStatus, dataCheck):
 # 锐捷认证登录
 def login_ruijie(session, username, password, login_url, dataLogin):
     try:
-        response = session.post(login_url, headers=headers, data=dataLogin, timeout=5)
+        response = session.post(login_url, headers=headers, data=json.dumps(dataLogin), timeout=5)
         response.encoding = 'utf-8'
         content = response.text
         try:
