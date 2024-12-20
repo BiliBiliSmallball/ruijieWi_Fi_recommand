@@ -32,8 +32,8 @@ dataLogin = {
 dataCheck = {
     "userName": "20224301003048",
     "userPassword": "MTIxMzM0",
-    "serviceSuffixId": "-1",
-    "dynamicPwdAuth": False,
+    #"serviceSuffixId": "-1",
+    #V"dynamicPwdAuth": False,
     "code": "",
     "codeTime": "",
     "validateCode": "",

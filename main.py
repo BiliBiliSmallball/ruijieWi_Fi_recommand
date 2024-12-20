@@ -56,10 +56,10 @@ def login_to_network():
 
 def is_clash_running():
     if clash.test_process("clash-verge.exe"):
-        log_config.log_message(0, "clash is running", open(LOG_FILE, "a"))
+        log_config.log_message(0, "clash is running", LOG_FILE, "main.py")
         return True
     else:
-        log_config.log_message(1, "clash is not running", open(LOG_FILE, "a"))
+        log_config.log_message(1, "clash is not running", LOG_FILE, "main.py")
         return False
 
 def main():
@@ -85,16 +85,16 @@ def main():
                 open_network_software()
                 print("重新连接成功。")
                 reconnect_count += 1
-                log_config.log_message(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", open(LOG_FILE, "a"))
+                log_config.log_message(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", LOG_FILE, "main.py")
             else:
                 print("重新连接失败。")
-                log_config.log_message(1, "Automatic reconnect failed.", open(LOG_FILE, "a"))
+                log_config.log_message(1, "Automatic reconnect failed.", LOG_FILE, "main.py")
         else:
             print("Wi-Fi已连接且网关可达。")
-            log_config.log_message(0, "Wi-Fi is connected and gateway is reachable", open(LOG_FILE, "a"))
+            log_config.log_message(0, "Wi-Fi is connected and gateway is reachable", LOG_FILE, "main.py")
 
         run_count += 1
-        log_config.log_message(0, f"Run count: {run_count}", open(LOG_FILE, "a"))
+        log_config.log_message(0, f"Run count: {run_count}", LOG_FILE, "main.py")
 
         if run_count % 3 == 0:
             if not is_clash_running():
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         print("\n停止服务")
-        log_config.log_message(1, "The script is terminated by the user\n---------------------------------------", open(LOG_FILE, "a"))
+        log_config.log_message(1, "The script is terminated by the user\n---------------------------------------", LOG_FILE, "main.py")
     except Exception as e:
         print(f"\n未知错误: {e}")
-        log_config.log_message(1, f"Unknown error: {e}\n---------------------------------------", open(LOG_FILE, "a"))
+        log_config.log_message(1, f"Unknown error: {e}\n---------------------------------------", LOG_FILE, "main.py")

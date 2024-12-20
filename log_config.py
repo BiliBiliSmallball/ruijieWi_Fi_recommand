@@ -25,18 +25,17 @@ def log_conuter(log_file_path: str):
         
     return tic
 
-def log_message(level: bool, message: str, log_file: str):
+def log_message(level: bool, message: str, log_file_path: str, script_name: str):
     """将消息记录到日志文件 
     Args: level (bool): 日志等级：0为正常，1为警告 
     message (str):写入日志的信息 
-    log_file (str): 文件路径，默认为log.txt 
+    log_file_path (str): 文件路径，默认为log.txt 
+    script_name (str): 脚本名称
     """ 
     timestamp = time.strftime('%Y-%m-%d %H:%M:%S') 
-    log_entry = f"{timestamp} - {message}\n" 
-    if level == 0: 
-        log_file.write(log_entry) 
-    else: 
-        log_file.write(f"[warning] {log_entry}") 
+    log_entry = f"{timestamp} - {script_name} [{'warning' if level else 'info'}] {message}\n" 
+    with open(log_file_path, "a") as log_file:
+        log_file.write(log_entry)
 
 def err_dispose(log_path: str, err_log_path: str, clear_count: int): 
     """错误日志处理函数，将错误日志写入到单独的文件中，并删除原始日志文件
@@ -61,7 +60,7 @@ def log_delet(log_file_path: str, err_log_path: str, clear_count: int):
     err_dispose(log_file_path, err_log_path, clear_count)
     with open(log_file_path, "w") as log_file: 
         pass # 清空文件 
-    log_message(1, f"Log cleared automatically. Log clear count: {clear_count}", open(log_file_path, "a"))
+    log_message(1, f"Log cleared automatically. Log clear count: {clear_count}", log_file_path, __file__)
 
 def log_clear_tic_get(err_log_path: str):
     """获取日志清理计数

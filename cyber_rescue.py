@@ -4,6 +4,7 @@ import time
 import os
 import subprocess
 import json
+from log_config import log_message
 
 # 定义请求头部信息
 headers = {
@@ -51,15 +52,15 @@ def manage_ethernet(action):
         if action in ["disconnect", "disable", "dis"]:
             result = os.system('netsh interface set interface "以太网" admin=disable')
             if result != 0:
-                print("Failed to disable Ethernet.")
+                log_message(1, "Failed to disable Ethernet.", "wifi_reconnect_log.txt", "cyber_rescue.py")
         elif action in ["connect", "enable", "en"]:
             result = os.system('netsh interface set interface "以太网" admin=enable')
             if result != 0:
-                print("Failed to enable Ethernet.")
+                log_message(1, "Failed to enable Ethernet.", "wifi_reconnect_log.txt", "cyber_rescue.py")
         else:
-            print("Invalid operation, choose 'disconnect' or 'connect'.")
+            log_message(1, "Invalid operation, choose 'disconnect' or 'connect'.", "wifi_reconnect_log.txt", "cyber_rescue.py")
     except Exception as e:
-        print(f"Error managing Ethernet interface: {e}")
+        log_message(1, f"Error managing Ethernet interface: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
 
 # 检查IP地址的连通性
 def check_ping(ip, count=1, timeout=1000):
@@ -80,19 +81,19 @@ def check_wifi_status(session, checkStatus, dataCheck):
         try:
             content_json = json.loads(content)
             if content_json.get("result") in ["wait", "success"]:
-                print(time.asctime(time.localtime(time.time())), "当前处于在线状态。")
+                log_message(0, "当前处于在线状态。", "wifi_reconnect_log.txt", "cyber_rescue.py")
                 return True
             else:
-                print(time.asctime(time.localtime(time.time())), "当前已经下线，正在尝试登录！")
+                log_message(1, "当前已经下线，正在尝试登录！", "wifi_reconnect_log.txt", "cyber_rescue.py")
                 return False
         except json.JSONDecodeError:
-            print(f"无法解析JSON响应：{content}")
+            log_message(1, f"无法解析JSON响应：{content}", "wifi_reconnect_log.txt", "cyber_rescue.py")
             return False
     except (requests.ConnectionError, requests.Timeout) as e:
-        print(f"检查WiFi连接状态时发生网络错误: {e}")
+        log_message(1, f"检查WiFi连接状态时发生网络错误: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
         return False
     except Exception as e:
-        print(f"检查WiFi连接状态时发生错误: {e}")
+        log_message(1, f"检查WiFi连接状态时发生错误: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
         return False
 
 # 锐捷认证登录
@@ -104,19 +105,19 @@ def login_ruijie(session, username, password, login_url, dataLogin):
         try:
             content_json = json.loads(content)
             if content_json.get("result") == "success":
-                print(time.asctime(time.localtime(time.time())), "登录成功！")
+                log_message(0, "登录成功！", "wifi_reconnect_log.txt", "cyber_rescue.py")
                 return True
             else:
-                print(f"登录失败，服务器返回错误信息：{content_json}")
+                log_message(1, f"登录失败，服务器返回错误信息：{content_json}", "wifi_reconnect_log.txt", "cyber_rescue.py")
                 return False
         except json.JSONDecodeError:
-            print(f"无法解析JSON响应：{content}")
+            log_message(1, f"无法解析JSON响应：{content}", "wifi_reconnect_log.txt", "cyber_rescue.py")
             return False
     except (requests.ConnectionError, requests.Timeout) as e:
-        print(f"登录时发生网络错误: {e}")
+        log_message(1, f"登录时发生网络错误: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
         return False
     except Exception as e:
-        print(f"登录时发生错误: {e}")
+        log_message(1, f"登录时发生错误: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
         return False
 
 # 检查WiFi是否已连接
@@ -137,13 +138,18 @@ def start_connect(auth_url, username, password, checkStatus, dataCheck):
     wifi_connected()
     while not check_wifi_status(session, checkStatus, dataCheck):
         if login_ruijie(session, username, password, auth_url, dataLogin):
-            print("认证成功，等待WiFi连接...")
+            log_message(0, "认证成功，等待WiFi连接...", "wifi_reconnect_log.txt", "cyber_rescue.py")
             tic += 1
             if tic > 3:
                 break
             time.sleep(5)
         else:
-            print("认证失败，重试中...")
+            log_message(1, "认证失败，重试中...", "wifi_reconnect_log.txt", "cyber_rescue.py")
+            tic += 1
+            if tic >= 5:
+                log_message(1, "尝试连接5次失败，重新开启以太网并停止运行。", "wifi_reconnect_log.txt", "cyber_rescue.py")
+                manage_ethernet("connect")
+                return
             time.sleep(5)
     
     manage_ethernet("connect")
