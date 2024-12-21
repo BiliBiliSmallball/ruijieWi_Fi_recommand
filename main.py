@@ -1,6 +1,6 @@
 """
 -*- coding: utf-8 -*-
-@Time    : 2024/12/09 10:38
+@Time    : 2024/12/21 23:50
 @File    : wifi自动重连.py
 @autor   : Ender_Zhu
 @Software: vscode
@@ -28,10 +28,10 @@ def connect_to_wifi(ssid):
    
 def is_clash_running():
     if clash.test_process("clash-verge.exe"):
-        log_config.log_message(0, "clash is running", open(LOG_FILE, "a"))
+        log_config.log_message(0, "clash is running", open(LOG_FILE, "a"),"main.py")
         return True
     else: 
-        log_config.log_message(1, "clash is not running", open(LOG_FILE, "a"))
+        log_config.log_message(1, "clash is not running", open(LOG_FILE, "a"),"main.py")
         return False
 def main(ssid: str): 
     reconnect_count = 0 
@@ -41,7 +41,7 @@ def main(ssid: str):
     while True: 
         #日志时间判断
         t = time.localtime() 
-        sleep_time = 10 if 14 <= t.tm_hour or t.tm_hour <= 2 or t.tm_hour == 8 or t.tm_hour == 9 else 1200
+        sleep_time = 10 if 14 <= t.tm_hour or t.tm_hour <= 2 else 1200
         
         #核心
         if not is_wifi_connected(): 
@@ -54,13 +54,13 @@ def main(ssid: str):
                 log_config.log_message(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", open(LOG_FILE, "a"),"main.py") 
             else:
                 print("重新连接失败。") 
-                log_config.log_message(1, "Automatic reconnect failed.", open(LOG_FILE, "a"),"main.py") 
+                log_config.log_message(1, "Automatic reconnect failed.", open(LOG_FILE, "a"),"main.py")
         else: 
             print("Wi-Fi已连接。") 
-            log_config.log_message(0, "Wi-Fi is connection", open(LOG_FILE, "a"),"main.py")  
+            log_config.log_message(0, "Wi-Fi is connection", open(LOG_FILE, "a"),"main.py") 
         
         run_count += 1 
-        log_config.log_message(0, f"Run count: {run_count}", open(LOG_FILE, "a"),"main.py") 
+        log_config.log_message(0, f"Run count: {run_count}", open(LOG_FILE, "a"),"main.py")
         
         if run_count % 3 == 0:
             if not is_clash_running():
@@ -87,9 +87,9 @@ if __name__ == "__main__":
         main(ssid) 
     except KeyboardInterrupt:
         print("\n停止服务") 
-        log_config.log_message(1, "The script is terminated by the user\n---------------------------------------", open(LOG_FILE, "a"),"main.py") 
+        log_config.log_message(1, "The script is terminated by the user\n---------------------------------------", open(LOG_FILE, "a"),"main.py")
     
     #请在测试时注释掉下面这一行
     except :
        print("\n未知错误。")
-       log_config.log_message(1, "Unknown error\n---------------------------------------", open(LOG_FILE, "a"),"main.py") 
+       log_config.log_message(1, "Unknown error\n---------------------------------------", open(LOG_FILE, "a"),"main.py")
