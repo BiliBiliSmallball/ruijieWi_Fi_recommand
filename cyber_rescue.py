@@ -102,6 +102,8 @@ def check_wifi_status(session, checkStatus, dataCheck):
 # 锐捷认证登录
 def login_ruijie(session, username, password, login_url, dataLogin):
     log_message(0, "正在尝试登录锐捷...", "wifi_reconnect_log.txt", "cyber_rescue.py")
+    log_message(0, f"登录URL: {login_url}", "wifi_reconnect_log.txt", "cyber_rescue.py")
+    log_message(0, f"登录数据: {dataLogin}", "wifi_reconnect_log.txt", "cyber_rescue.py")
     try:
         response = session.post(login_url, headers=headers, data=json.dumps(dataLogin), timeout=5)
         response.encoding = 'utf-8'
@@ -163,14 +165,14 @@ def start_connect(auth_url, username, password, checkStatus, dataCheck):
     time.sleep(5)
 
 def main():
-    auth_url = "http://10.30.12.10:30004/byod/view/byod/byodLogin.html"
+    auth_url = "http://10.30.12.10:30004/byod/byodrs/login/defaultLogin"
     checkStatus = "http://10.30.12.10:30004/byod/byodrs/login/queryResult"
     username = "20224301003048"
     password = "MTIxMzM0"
 
-    log_message(0, "程序开始运行...", "wifi_reconnect_log.txt", "cyber_rescue.py")
+    print("程序开始运行...")
     start_connect(auth_url, username, password, checkStatus, dataCheck)
-    log_message(0, "程序运行结束。", "wifi_reconnect_log.txt", "cyber_rescue.py")
+    print("程序运行结束。")
 
 if __name__ == '__main__':
     main()

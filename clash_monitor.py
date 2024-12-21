@@ -31,10 +31,10 @@ def start_process(process_path):
         process_names = ["clash-verge.exe", "clash-verge-service.exe"]
         for name in process_names:
             start_process("C:\\Program Files\\Clash Verge")
-            #start_process("C:\\Program Files\\Clash Verge\\clash-verge.exe")
+            start_process("C:\\Program Files\\Clash Verge\\clash-verge.exe")
         test_process('clash-verge-service.exe') 
-        # if not test_process('clash-verge-service.exe'):
-        #     start_process("C:\\Program Files\\Clash Verge\\clash-verge-service.exe")
+        if not test_process('clash-verge-service.exe'):
+            start_process("C:\\Program Files\\Clash Verge\\clash-verge-service.exe")
         input("按下Enter键退出")
     
     if __name__ == "__main__":

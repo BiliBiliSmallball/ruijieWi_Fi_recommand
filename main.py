@@ -6,7 +6,7 @@ import log_config
 # 定义常量
 LOG_CLEAR_THRESHOLD = 600
 LOG_FILE = "wifi_reconnect_log.txt"
-ERR_LOG_FILE = "./err_log.txt"
+ERR_LOG_FILE = "err_log.txt"
 SSID = 'gtxy_wifi'  # 替换为你的Wi-Fi网络名称
 GATEWAY_IP = '10.60.0.1'  # 替换为你指定的网关IP地址
 
@@ -34,11 +34,11 @@ def connect_ethernet():
 
 def close_network_software():
     # 关闭网络连接软件（假设软件名为network_software.exe）
-    subprocess.run(['taskkill', '/F', '/IM', 'network_software.exe'])
+    subprocess.run(['taskkill', '/F', '/IM', 'C:\\Program Files\\Clash Verge\\Clash Verge.exe'])
 
 def open_network_software():
     # 重新打开网络连接软件（假设软件路径为C:\Program Files\network_software\network_software.exe）
-    subprocess.run(['start', 'C:\\Program Files\\network_software\\network_software.exe'])
+    subprocess.run(['start', 'C:\\Program Files\\Clash Verge\\Clash Verge.exe'])
 
 def connect_to_wifi(ssid):
     # 连接到指定的Wi-Fi网络
@@ -47,10 +47,10 @@ def connect_to_wifi(ssid):
 def login_to_network():
     # 登入指定网络并提交表单数据（假设使用requests库）
     import requests
-    login_url = 'http://example.com/login'  # 替换为你的登录URL
+    login_url = 'http://10.30.12.10:30004/byod/view/byod/byodLogin.html'  # 替换为你的登录URL
     login_data = {
-        'username': 'your_username',  # 替换为你的用户名
-        'password': 'your_password'   # 替换为你的密码
+        'username': '20224301003048',  # 替换为你的用户名
+        'password': ''   # 替换为你的密码
     }
     requests.post(login_url, data=login_data)
 
@@ -72,46 +72,41 @@ def main():
         t = time.localtime()
         sleep_time = 10 if 14 <= t.tm_hour <= 2 else 1200
 
-        # 核心
-        if not is_wifi_connected() or not ping_gateway():
-            print("Wi-Fi已断开连接或无法ping通网关，尝试重新连接...")
-            disconnect_ethernet()
-            close_network_software()
-            connect_to_wifi(SSID)
-            time.sleep(5)
-            if is_wifi_connected():
-                login_to_network()
-                connect_ethernet()
-                open_network_software()
-                print("重新连接成功。")
-                reconnect_count += 1
-                log_config.log_message(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", LOG_FILE, "main.py")
+        #核心
+        if not is_wifi_connected(): 
+            print("Wi-Fi已断开连接，尝试重新连接...") 
+            connect_to_wifi(SSID) 
+            time.sleep(5) 
+            if is_wifi_connected(): 
+                print("重新连接成功。") 
+                reconnect_count += 1 
+                log_config.log_message(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", LOG_FILE, "main.py") 
             else:
-                print("重新连接失败。")
-                log_config.log_message(1, "Automatic reconnect failed.", LOG_FILE, "main.py")
-        else:
-            print("Wi-Fi已连接且网关可达。")
-            log_config.log_message(0, "Wi-Fi is connected and gateway is reachable", LOG_FILE, "main.py")
-
-        run_count += 1
+                print("重新连接失败。") 
+                log_config.log_message(1, "Automatic reconnect failed.", LOG_FILE, "main.py") 
+        else: 
+            print("Wi-Fi已连接。") 
+            log_config.log_message(0, "Wi-Fi is connection", LOG_FILE, "main.py") 
+        
+        run_count += 1 
         log_config.log_message(0, f"Run count: {run_count}", LOG_FILE, "main.py")
-
+        
         if run_count % 3 == 0:
             if not is_clash_running():
                 clash.start_process("C:\\Program Files\\Clash Verge\\clash-verge.exe")
-
-        # 显示
-        print(f"重连次数: {reconnect_count}\n")
-        print(f"运行次数: {run_count}\n")
-        print(f"运行时间: {t.tm_hour}:{t.tm_min}:{t.tm_sec}\n")
-
-        # 日志清理
-        if run_count > LOG_CLEAR_THRESHOLD:
-            log_config.log_delet(LOG_FILE, ERR_LOG_FILE, log_clear_count)
+        
+        #显示
+        print(f"重连次数: {reconnect_count}\n") 
+        print(f"运行次数: {run_count}\n") 
+        print(f"运行时间: {t.tm_hour}:{t.tm_min}:{t.tm_sec}\n") 
+        
+        #日志清理
+        if run_count > LOG_CLEAR_THRESHOLD: 
+            log_config.log_delet(LOG_FILE, ERR_LOG_FILE, log_clear_count) 
             log_clear_count += 1
-            run_count = 0  # 重置运行次数
-
-        time.sleep(sleep_time)
+            run_count = 0 # 重置运行次数 
+            
+        time.sleep(sleep_time) 
 
 if __name__ == "__main__":
     print("启动Wi-Fi重连服务。按Ctrl+C退出。")
