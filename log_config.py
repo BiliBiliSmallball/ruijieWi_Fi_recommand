@@ -11,6 +11,7 @@
 - 将日志消息记录到指定的日志文件中。
 - 处理错误日志，将其从普通日志文件中分离并记录到单独的错误日志文件中。 
 """
+import os
 import time
 
 def log_conuter(log_file_path: str):
@@ -34,8 +35,18 @@ def log_message(level: bool, message: str, log_file_path: str, script_name: str)
     """ 
     timestamp = time.strftime('%Y-%m-%d %H:%M:%S') 
     log_entry = f"{timestamp} - {script_name} [{'warning' if level else 'info'}] {message}\n" 
-    with open(log_file_path, "a") as log_file:
-        log_file.write(log_entry)
+
+    try:
+        if not os.path.exists(log_file_path):
+            with open(log_file_path, "w") as log_file:
+                log_file.write("")
+
+        with open(log_file_path, "a") as log_file:
+            log_file.write(log_entry)
+    except PermissionError as e:
+        print(f"Permission denied: {e}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 def err_dispose(log_path: str, err_log_path: str, clear_count: int): 
     """错误日志处理函数，将错误日志写入到单独的文件中，并删除原始日志文件
