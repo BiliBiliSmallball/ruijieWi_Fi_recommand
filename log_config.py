@@ -1,6 +1,6 @@
 """
 -*- coding: utf-8 -*-
-@Time    : 2024/12/11 19:51
+@Time    : 2024/12/21 17:02
 @File    : log_config.py
 @autor   : Ender_Zhu
 @Software: vscode
@@ -25,18 +25,18 @@ def log_conuter(log_file_path: str):
         
     return tic
 
-def log_message(level: bool, message: str, log_file: str):
+def log_message(level: bool, message: str, log_file: str, module_name: str):
     """将消息记录到日志文件 
-    Args: level (bool): 日志等级：0为正常，1为警告 
-    message (str):写入日志的信息 
-    log_file (str): 文件路径，默认为log.txt 
+    Args: 
+        level (bool): 日志等级：0为正常，1为警告 
+        message (str): 写入日志的信息 
+        log_file (str): 文件路径，默认为log.txt 
+        module_name (str): 写入模块名
     """ 
     timestamp = time.strftime('%Y-%m-%d %H:%M:%S') 
-    log_entry = f"{timestamp} - {message}\n" 
-    if level == 0: 
-        log_file.write(log_entry) 
-    else: 
-        log_file.write(f"[warning] {log_entry}") 
+    level_str = "INFO" if level == 0 else "WARNING"
+    log_entry = f"{timestamp} [{level_str}] {message} ({module_name})\n"
+    log_file.write(log_entry)
 
 def err_dispose(log_path: str, err_log_path: str, clear_count: int): 
     """错误日志处理函数，将错误日志写入到单独的文件中，并删除原始日志文件
