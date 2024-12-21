@@ -10,6 +10,7 @@ import subprocess
 import time
 import clash_monitor as clash
 import log_config
+import os
 
 # 定义常量  
 LOG_CLEAR_THRESHOLD = 600
@@ -39,7 +40,11 @@ def main(ssid: str):
     reconnect_count = 0 
     run_count = 0 
     log_clear_count = log_config.log_clear_tic_get(ERR_LOG_FILE)
-     
+    #判断文件wifi_reconnect_log.txt是否存在，不存在则创建
+    if not os.path.exists(LOG_FILE):
+        with open(LOG_FILE, "w") as log_file:
+            log_file.write("")
+    
     while True: 
         # 日志时间判断
         t = time.localtime() 
