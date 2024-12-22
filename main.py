@@ -75,6 +75,7 @@ def main(ssid: str):
         if run_count > LOG_CLEAR_THRESHOLD: 
             log_config.log_delet(LOG_FILE, ERR_LOG_FILE, log_clear_count) 
             log_clear_count += 1
+            log_config.log_message(1, f"Log cleared automatically. Log clear count: {log_clear_count}", open(LOG_FILE, "a"),"main.py")
             run_count = 0 # 重置运行次数 
             
         time.sleep(sleep_time) 
