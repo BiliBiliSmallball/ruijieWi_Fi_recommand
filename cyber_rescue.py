@@ -176,3 +176,25 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# {
+#   "userName": "20224301003001",
+#   "userPassword": "MTQwMzY5",
+#   "serviceSuffixId": "-1",
+#   "dynamicPwdAuth": False,
+#   "code": "",
+#   "codeTime": "",
+#   "validateCode": "",
+#   "licenseCode": "",
+#   "userGroupId": 0,
+#   "validationType": 0,
+#   "guestManagerId": 19806,
+#   "shopIdE": 'null',
+#   "wlannasid": 'null'
+# }
+
+# {
+#   "code": 0,
+#   "msg": "success",
+#   "data": {"showLoginDown": True}
+# }
