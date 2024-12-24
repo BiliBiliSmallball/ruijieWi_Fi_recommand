@@ -30,21 +30,22 @@ dataCheck = {
     }
 }
 
-dataLogin = {
-  "userName": "20224301003001",
-  "userPassword": "MTQwMzY5",
-  "serviceSuffixId": "-1",
-  "dynamicPwdAuth": False,
-  "code": "",
-  "codeTime": "",
-  "validateCode": "",
-  "licenseCode": "",
-  "userGroupId": 0,
-  "validationType": 0,
-  "guestManagerId": 19806,
-  "shopIdE": 'null',
-  "wlannasid": 'null'
+dataCheck = {
+    "userName": "20224301003048",
+    "userPassword": "MTIxMzM0",
+    "serviceSuffixId": "-1",
+    "dynamicPwdAuth": False,
+    "code": "",
+    "codeTime": "",
+    "validateCode": "",
+    "licenseCode": "",
+    "userGroupId": 0,
+    "validationType": 0,
+    "guestManagerId": 19806,
+    "shopIdE": 'null',
+    "wlannasid": 'null'
 }
+
 auth_url = "http://10.30.12.10:30004/byod/byodrs/login/defaultLogin"
 checkStatus = "http://10.30.12.10:30004/byod/byodrs/login/queryResult"
 username = "20224301003001"
