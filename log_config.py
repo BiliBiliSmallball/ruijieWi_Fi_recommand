@@ -36,7 +36,11 @@ def log_message(level: bool, message: str, log_file: str, module_name: str):
     timestamp = time.strftime('%Y-%m-%d %H:%M:%S') 
     level_str = "INFO" if level == 0 else "WARNING"
     log_entry = f"{timestamp} [{level_str}] {message} ({module_name})\n"
-    log_file.write(log_entry)
+    try:
+        with open(log_file, 'a', encoding='utf-8') as log_file:
+            log_file.write(log_entry)
+    except:
+        log_file.write(log_entry)
 
 def err_dispose(log_path: str, err_log_path: str, clear_count: int): 
     """错误日志处理函数，将错误日志写入到单独的文件中，并删除原始日志文件
