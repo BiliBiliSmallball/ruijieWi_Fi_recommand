@@ -17,7 +17,8 @@ headers = {
     'host': '10.30.12.10:30004',
     'pragma':'no-cache',
     'Referer': 'http://10.30.12.10:30004/byod/index.html?usermac=00-13-EF-5F-40-4A&userip=10.20.172.199&userurl=http://www.msftconnecttest.com/redirect&original=http://www.msftconnecttest.com/redirect&ssid=gtxy_wifi',
-    "upgrade-insecure-requests": '1'
+    "upgrade-insecure-requests": '1',
+    'x-requested-with':'XMLHttpRequest'
 }
 
 # 登录和检查状态的数据
@@ -128,40 +129,48 @@ def check_wifi_status(session, checkStatus, dataCheck):
         log_message(1, f"检查WiFi连接状态时发生错误: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
         return False
 
-# 开始连接
+# 开始连接流程        
 def start_connect(auth_url, username, password, checkStatus, dataCheck):
     tic = 0
     log_message(0, "开始连接流程...", "wifi_reconnect_log.txt", "cyber_rescue.py")
     manage_ethernet("disconnect")
     start_process("clash-verge.exe", action="kill")
-    time.sleep(3)
+    time.sleep(5)
 
     session = requests.Session()
-    while login_ruijie(session, username, password, auth_url, dataCheck):
-        if not wifi_connected():
-            log_message(0, "认证成功，等待WiFi连接...", "wifi_reconnect_log.txt", "cyber_rescue.py")
-            if check_ping("192.168.1.1") == 'ok' and check_wifi_status(session, checkStatus, dataCheck):
-                break
-            time.sleep(5)
+    while True:
+        if wifi_connected():
+            log_message(0, "已连接到WiFi", "wifi_reconnect_log.txt", "cyber_rescue.py")
+            break
         else:
-            log_message(1, "认证失败，重试中...", "wifi_reconnect_log.txt", "cyber_rescue.py")
-            tic += 1
-            if tic >= 5:
-                log_message(1, "尝试连接5次失败，重新开启以太网并停止运行。", "wifi_reconnect_log.txt", "cyber_rescue.py")
-                manage_ethernet("connect")
-                return
+            log_message(1, "未连接到WiFi，尝试连接...", "wifi_reconnect_log.txt", "cyber_rescue.py")
+        
+        if login_ruijie(session, username, password, auth_url, dataCheck):
+            log_message(0, "登录成功，等待WiFi连接...", "wifi_reconnect_log.txt", "cyber_rescue.py")
             time.sleep(5)
+            if check_ping("www.bing.com") == 'ok' and check_wifi_status(session, checkStatus, dataCheck):
+                break
+        else:
+            log_message(1, "登录失败，重试中...", "wifi_reconnect_log.txt", "cyber_rescue.py")
 
-    if check_ping("192.168.1.1") == 'ok' and check_wifi_status(session, checkStatus, dataCheck):
+        tic += 1
+        if tic >= 5:
+            log_message(1, "尝试连接5次失败，重新开启以太网并停止运行。", "wifi_reconnect_log.txt", "cyber_rescue.py")
+            manage_ethernet("connect")
+            return
+
+        time.sleep(5)
+    
+    if check_ping("www.bing.com") == 'ok' and check_wifi_status(session, checkStatus, dataCheck):
         manage_ethernet("connect")
         start_process("C:\\Program Files\\Clash Verge\\clash-verge.exe")
     else:
-        log_message(1, "无法ping通网关或WiFi状态检查失败，重新开启以太网并停止运行。", "wifi_reconnect_log.txt", "cyber_rescue.py")
+        log_message(1, "无法ping通网站或WiFi状态检查失败，重新开启以太网并停止运行。", "wifi_reconnect_log.txt", "cyber_rescue.py")
         manage_ethernet("connect")
 
 def main():
     print("程序开始运行...")
-    start_connect(auth_url, username, password, checkStatus, dataCheck)
+    start_connect(username, password, auth_url, checkStatus, dataCheck)
     print("程序运行结束。")
 
 if __name__ == '__main__':
