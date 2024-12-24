@@ -47,8 +47,8 @@ dataLogin = {
 }
 auth_url = "http://10.30.12.10:30004/byod/byodrs/login/defaultLogin"
 checkStatus = "http://10.30.12.10:30004/byod/byodrs/login/queryResult"
-username = "20224301003048"
-password = "MTIxMzM0"
+username = "20224301003001"
+password = "MTQwMzY5"
 
 # 网口操作
 def manage_ethernet(action):
