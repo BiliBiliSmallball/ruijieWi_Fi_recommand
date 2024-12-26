@@ -54,7 +54,7 @@ password = "MTQwMzY5"
 # 网口操作
 def manage_ethernet(action):
     try:
-        log_message(0, f"Executing Ethernet operation: {action}", "wifi_reconnect_log.txt", "cyber_rescue.py")
+        log_message(0, f"正在执行以太网操作: {action}", "wifi_reconnect_log.txt", "cyber_rescue.py")
         if action in ["disconnect", "disable", "dis"]:
             result = os.system('netsh interface set interface "以太网" admin=disable')
             if result != 0:
@@ -70,7 +70,7 @@ def manage_ethernet(action):
 
 # 检查ping结果
 def check_ping(ip, count=1, timeout=1000):
-    log_message(0, f"Pinging IP address: {ip}", "wifi_reconnect_log.txt", "cyber_rescue.py")
+    log_message(0, f"正在ping IP地址: {ip}", "wifi_reconnect_log.txt", "cyber_rescue.py")
     cmd = ['ping', '-n', str(count), '-w', str(timeout), ip]
     try:
         result = subprocess.run(cmd, check=True, capture_output=True, text=True)
@@ -82,58 +82,58 @@ def check_ping(ip, count=1, timeout=1000):
 
 # 检查WiFi是否已连接
 def wifi_connected():
-    log_message(0, "Checking if WiFi is connected...", "wifi_reconnect_log.txt", "cyber_rescue.py")
+    log_message(0, "正在检查WiFi是否已连接...", "wifi_reconnect_log.txt", "cyber_rescue.py")
     result = subprocess.run(['netsh', 'wlan', 'show', 'interfaces'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if "已连接" in result.stdout:
-        log_message(0, "Wi-Fi is connected", "wifi_reconnect_log.txt", "cyber_rescue.py")
+        log_message(0, "Wi-Fi已连接", "wifi_reconnect_log.txt", "cyber_rescue.py")
         return True
-    log_message(1, "Wi-Fi is not connected", "wifi_reconnect_log.txt", "cyber_rescue.py")
+    log_message(1, "Wi-Fi未连接", "wifi_reconnect_log.txt", "cyber_rescue.py")
     return False
 
 # 尝试登录锐捷认证
 def login_ruijie(session, username, password, login_url, dataLogin):
-    log_message(0, "Attempting to log in to Ruijie...", "wifi_reconnect_log.txt", "cyber_rescue.py")
+    log_message(0, "正在尝试登录锐捷...", "wifi_reconnect_log.txt", "cyber_rescue.py")
     try:
         response = session.post(login_url, data=dataLogin, timeout=5)
         response.encoding = 'utf-8'
         content = response.text
         if "success" in content:
-            log_message(0, "Login successful!", "wifi_reconnect_log.txt", "cyber_rescue.py")
+            log_message(0, "登录成功！", "wifi_reconnect_log.txt", "cyber_rescue.py")
             return True
         else:
-            log_message(1, f"Login failed, server returned error message: {content}", "wifi_reconnect_log.txt", "cyber_rescue.py")
+            log_message(1, f"登录失败，服务器返回错误信息：{content}", "wifi_reconnect_log.txt", "cyber_rescue.py")
             return False
     except (requests.ConnectionError, requests.Timeout) as e:
-        log_message(1, f"Network error occurred during login: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
+        log_message(1, f"登录时发生网络错误: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
         return False
     except Exception as e:
-        log_message(1, f"Error occurred during login: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
+        log_message(1, f"登录时发生错误: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
         return False
 
 # 检查WiFi连接状态
 def check_wifi_status(session, checkStatus, dataCheck):
-    log_message(0, "Checking WiFi connection status...", "wifi_reconnect_log.txt", "cyber_rescue.py")
+    log_message(0, "正在检查WiFi连接状态...", "wifi_reconnect_log.txt", "cyber_rescue.py")
     try:
-        response = session.get(checkStatus, params=dataCheck, timeout=5, headers=headers)
+        response = session.get(checkStatus, params=dataCheck, timeout=5)
         response.encoding = 'utf-8'
         content = response.text
         if "success" in content:
-            log_message(0, "Currently online.", "wifi_reconnect_log.txt", "cyber_rescue.py")
+            log_message(0, "当前处于在线状态。", "wifi_reconnect_log.txt", "cyber_rescue.py")
             return True
         else:
-            log_message(1, "Currently offline, attempting to log in!", "wifi_reconnect_log.txt", "cyber_rescue.py")
+            log_message(1, "当前已经下线，正在尝试登录！", "wifi_reconnect_log.txt", "cyber_rescue.py")
             return False
     except (requests.ConnectionError, requests.Timeout) as e:
-        log_message(1, f"Network error occurred while checking WiFi connection status: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
+        log_message(1, f"检查WiFi连接状态时发生网络错误: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
         return False
     except Exception as e:
-        log_message(1, f"Error occurred while checking WiFi connection status: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
+        log_message(1, f"检查WiFi连接状态时发生错误: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
         return False
 
 # 开始连接流程        
 def start_connect(auth_url, username, password, checkStatus, dataCheck):
     tic = 0
-    log_message(0, "Starting connection process...", "wifi_reconnect_log.txt", "cyber_rescue.py")
+    log_message(0, "开始连接流程...", "wifi_reconnect_log.txt", "cyber_rescue.py")
     manage_ethernet("disconnect")
     start_process("clash-verge.exe", action="kill")
     time.sleep(5)
@@ -141,22 +141,22 @@ def start_connect(auth_url, username, password, checkStatus, dataCheck):
     session = requests.Session()
     while True:
         if wifi_connected():
-            log_message(0, "Connected to WiFi", "wifi_reconnect_log.txt", "cyber_rescue.py")
+            log_message(0, "已连接到WiFi", "wifi_reconnect_log.txt", "cyber_rescue.py")
             break
         else:
-            log_message(1, "Not connected to WiFi, attempting to connect...", "wifi_reconnect_log.txt", "cyber_rescue.py")
+            log_message(1, "未连接到WiFi，尝试连接...", "wifi_reconnect_log.txt", "cyber_rescue.py")
         
         if login_ruijie(session, username, password, auth_url, dataCheck):
-            log_message(0, "Login successful, waiting for WiFi connection...", "wifi_reconnect_log.txt", "cyber_rescue.py")
+            log_message(0, "登录成功，等待WiFi连接...", "wifi_reconnect_log.txt", "cyber_rescue.py")
             time.sleep(5)
             if check_ping("www.bing.com") == 'ok' and check_wifi_status(session, checkStatus, dataCheck):
                 break
         else:
-            log_message(1, "Login failed, retrying...", "wifi_reconnect_log.txt", "cyber_rescue.py")
+            log_message(1, "登录失败，重试中...", "wifi_reconnect_log.txt", "cyber_rescue.py")
 
         tic += 1
         if tic >= 5:
-            log_message(1, "Failed to connect after 5 attempts, re-enabling Ethernet and stopping.", "wifi_reconnect_log.txt", "cyber_rescue.py")
+            log_message(1, "尝试连接5次失败，重新开启以太网并停止运行。", "wifi_reconnect_log.txt", "cyber_rescue.py")
             manage_ethernet("connect")
             return
 
@@ -166,13 +166,13 @@ def start_connect(auth_url, username, password, checkStatus, dataCheck):
         manage_ethernet("connect")
         start_process("C:\\Program Files\\Clash Verge\\clash-verge.exe")
     else:
-        log_message(1, "Unable to ping website or WiFi status check failed, re-enabling Ethernet and stopping.", "wifi_reconnect_log.txt", "cyber_rescue.py")
+        log_message(1, "翻译结果：Unable to ping the website or WiFi status check fails, re-turn on the Ethernet and stop working.", "wifi_reconnect_log.txt", "cyber_rescue.py")
         manage_ethernet("connect")
 
 def main():
-    print("Program started...")
+    print("程序开始运行...")
     start_connect(username, password, auth_url, checkStatus, dataCheck)
-    print("Program ended.")
+    print("程序运行结束。")
 
 if __name__ == '__main__':
     main()
