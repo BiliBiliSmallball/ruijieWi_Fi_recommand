@@ -72,7 +72,7 @@ def log_delet(log_file_path: str, err_log_path: str, clear_count: int):
     err_dispose(log_file_path, err_log_path, clear_count)
     with open(log_file_path, "w") as log_file: 
         pass # 清空文件 
-    log_message(1, f"Log cleared automatically. Log clear count: {clear_count}", open(log_file_path, "a"), "main.py")
+    log_message(1, f"Log cleared automatically. Log clear count: {clear_count}",log_file_path, "main.py")
 
 def log_clear_tic_get(err_log_path: str):
     """获取日志清理计数
