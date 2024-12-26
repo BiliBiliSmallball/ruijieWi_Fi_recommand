@@ -1,4 +1,4 @@
-﻿from selenium import webdriver
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.edge.options import Options as EdgeOptions
@@ -6,23 +6,73 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import os
 import subprocess
-import clash_monitor as clash
+import requests
+import time
+from log_config import log_message
+from clash_monitor import is_process_running, start_process
 
-# 断开或连接以太网
+# 定义请求头部信息
+headers = {
+    'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+    'Accept-Encoding': 'gzip, deflate',
+    'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+    'connection':'keep-alive',
+    'Cache-Control': 'no-cache',
+    "cookie":"testcookie=yes; userip=10.20.172.199",
+    'host': '10.30.12.10:30004',
+    'pragma':'no-cache',
+    'Referer': 'http://10.30.12.10:30004/byod/index.html?usermac=00-13-EF-5F-40-4A&userip=10.20.172.199&userurl=http://www.msftconnecttest.com/redirect&original=http://www.msftconnecttest.com/redirect&ssid=gtxy_wifi',
+    "upgrade-insecure-requests": '1',
+    'x-requested-with':'XMLHttpRequest'
+}
+
+# 登录和检查状态的数据
+dataCheck = {
+    "code": 0,
+    "msg": "success",
+    "data": {
+        "showLoginDown": True
+    }
+}
+
+dataCheck = {
+    "userName": "20224301003048",
+    "userPassword": "MTIxMzM0",
+    "serviceSuffixId": "-1",
+    "dynamicPwdAuth": False,
+    "code": "",
+    "codeTime": "",
+    "validateCode": "",
+    "licenseCode": "",
+    "userGroupId": 0,
+    "validationType": 0,
+    "guestManagerId": 19806,
+    "shopIdE": 'null',
+    "wlannasid": 'null'
+}
+
+auth_url = "http://10.30.12.10:30004/byod/byodrs/login/defaultLogin"
+checkStatus = "http://10.30.12.10:30004/byod/byodrs/login/queryResult"
+username = "20224301003001"
+password = "MTQwMzY5"
+
+# 网口操作
 def manage_ethernet(action):
     try:
+        log_message(0, f"Executing Ethernet operation: {action}", "wifi_reconnect_log.txt", "cyber_rescue.py")
         if action in ["disconnect", "disable", "dis"]:
             result = os.system('netsh interface set interface "以太网" admin=disable')
             if result != 0:
-                print("Failed to disable Ethernet.")
+                log_message(1, "Failed to disable Ethernet.", "wifi_reconnect_log.txt", "cyber_rescue.py")
         elif action in ["connect", "enable", "en"]:
             result = os.system('netsh interface set interface "以太网" admin=enable')
             if result != 0:
-                print("Failed to enable Ethernet.")
+                log_message(1, "Failed to enable Ethernet.", "wifi_reconnect_log.txt", "cyber_rescue.py")
         else:
-            print("Invalid operation, choose 'disconnect' or 'connect'.")
+            log_message(1, "Invalid operation, choose 'disconnect' or 'connect'.", "wifi_reconnect_log.txt", "cyber_rescue.py")
     except Exception as e:
-        print(f"Error managing Ethernet interface: {e}")
+        log_message(1, f"Error managing Ethernet interface: {e}", "wifi_reconnect_log.txt", "cyber_rescue.py")
 
 def check_clash():
     try:
