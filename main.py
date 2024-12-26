@@ -22,13 +22,9 @@ def is_wifi_connected():
     if "已连接" in result.stdout: 
         return True 
     return False 
-
 def connect_to_wifi(ssid): 
     # 连接到指定的Wi-Fi网络 
-    msg = subprocess.run(['netsh', 'wlan', 'connect', f'name={ssid}'])
-    if "系统上没有无线接口" in msg.stdout:
-        log_config.log_message(1, "There is no wireless interface on the system", open(LOG_FILE, "a"),"main.py")
-        raise Exception("There is no wireless interface on the system")
+    subprocess.run(['netsh', 'wlan', 'connect', f'name={ssid}'])
    
 def is_clash_running():
     if clash.test_process("clash-verge.exe"):
@@ -37,7 +33,6 @@ def is_clash_running():
     else: 
         log_config.log_message(1, "clash is not running", open(LOG_FILE, "a"),"main.py")
         return False
-    
 def main(ssid: str): 
     reconnect_count = 0 
     run_count = 0 
@@ -46,7 +41,7 @@ def main(ssid: str):
     while True: 
         #日志时间判断
         t = time.localtime() 
-        sleep_time = 10 if 14 <= t.tm_hour or t.tm_hour <= 2 else 1200
+        sleep_time = 5 if 14 <= t.tm_hour or t.tm_hour <= 2 else 1200
         
         #核心
         if not is_wifi_connected(): 
@@ -88,15 +83,14 @@ def main(ssid: str):
 
 if __name__ == "__main__": 
     print("启动Wi-Fi重连服务。按Ctrl+C退出。") 
-    ssid = 'gtxy_wifi' # 替换为你的Wi-Fi网络名称  
+    ssid = 'gtxy_wifi' # 替换为你的Wi-Fi网络名称 
     try: 
         main(ssid) 
-        
     except KeyboardInterrupt:
         print("\n停止服务") 
-        log_config.log_message(1, "The script is terminated by the user\n---------------------------------", open(LOG_FILE, "a"),"main.py")
+        log_config.log_message(1, "The script is terminated by the user\n---------------------------------------", open(LOG_FILE, "a"),"main.py")
     
-    #请在测试时注释掉下面这一行
-    except Exception as e:
-       print(f"\n意外错误{e}")
-       log_config.log_message(1, f"opps!! Unexpected errors{e}\n------------------------------------", open(LOG_FILE, "a"),"main.py") 
+    # 请在测试时注释掉下面这一行
+    except :
+       print("\n未知错误。")
+       log_config.log_message(1, "Unknown error\n---------------------------------------", open(LOG_FILE, "a"),"main.py")

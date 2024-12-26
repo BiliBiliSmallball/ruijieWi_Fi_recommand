@@ -20,7 +20,7 @@ def log_conuter(log_file_path: str):
     Returns: 
     int: 日志文件的行数
     """
-    with open(log_file_path, "r") as log_file:
+    with open(log_file_path, "r",encoding = "UTF-8") as log_file:
         tic = (len(log_file.readlines())-1) // 2
         
     return tic
@@ -39,8 +39,10 @@ def log_message(level: bool, message: str, log_file: str, module_name: str):
     try:
         with open(log_file, 'a', encoding='utf-8') as log_file:
             log_file.write(log_entry)
-    except:
-        log_file.write(log_entry)
+    except Exception as e:  # 更通用的异常捕获
+        with open(log_file, 'a', encoding='utf-8') as log_file:
+            log_message(1, f"Error happened: {e}", log_file, "log_config.py") 
+
 
 def err_dispose(log_path: str, err_log_path: str, clear_count: int): 
     """错误日志处理函数，将错误日志写入到单独的文件中，并删除原始日志文件
@@ -49,12 +51,17 @@ def err_dispose(log_path: str, err_log_path: str, clear_count: int):
     err_log_path (str): 错误日志输出文件路径 
     clear_count (int): 日志已被清理的次数 
     """
-    with open(log_path, "r") as log_file, open(err_log_path, "a") as err_log: 
-        for line in log_file: 
-            if '[warning]' in line: 
-                err_log.write(line) 
-        err_log.write(f"------Error logged {clear_count} time--------\n") 
-         
+    try:
+        with open(log_path, "r",encoding="UTF-8") as log_file, open(err_log_path, "a",encoding="UTF-8") as err_log: 
+            for line in log_file: 
+                if '[WARNING]' in line: 
+                    err_log.write(line) 
+            err_log.write(f"------Error logged {clear_count} time--------\n")
+    except UnicodeDecodeError as e:
+        log_message(1, f"Error happened: {e}", err_log_path, "log_config.py")
+        with open(err_log_path, "a", encoding='utf-8') as err_log:
+            err_log.write(f"------Error logged {clear_count} time--------\n")
+            
 def log_delet(log_file_path: str, err_log_path: str, clear_count: int): 
     """ 根据日志清理计数决定是否清理日志文件。
     参数: 
@@ -87,3 +94,5 @@ def log_clear_tic_get(err_log_path: str):
 
 if __name__ == "__main__":
     log_conuter("wifi_reconnect_log.txt")
+    err_dispose("wifi_reconnect_log.txt", "err_log.txt", 0)
+    input("按下enter键位退出")
