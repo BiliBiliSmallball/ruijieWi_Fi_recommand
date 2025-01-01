@@ -60,7 +60,7 @@ password = "MTQwMzY5"
 # 网口操作
 def manage_ethernet(action):
     try:
-        log_message(0, f"Executing Ethernet operation: {action}", "wifi_reconnect_log.txt", "cyber_rescue.py")
+        log_message(0, f"正在执行以太网操作: {action}", "wifi_reconnect_log.txt", "cyber_rescue.py")
         if action in ["disconnect", "disable", "dis"]:
             result = os.system('netsh interface set interface "以太网" admin=disable')
             if result != 0:

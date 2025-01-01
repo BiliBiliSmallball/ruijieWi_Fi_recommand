@@ -1,6 +1,6 @@
 """
 -*- coding: utf-8 -*-
-@Time    : 2024/12/21 17:02
+@Time    : 2025/1/1 21:17
 @File    : log_config.py
 @autor   : Ender_Zhu
 @Software: vscode
@@ -13,17 +13,15 @@
 """
 import time
 
-def log_conuter(log_file_path: str):
+def log_counter(log_file_path: str) -> int:
     """获取日志文件行数
     Args: 
     log_file_path (str): 日志文件的路径
     Returns: 
     int: 日志文件的行数
     """
-    with open(log_file_path, "r",encoding = "UTF-8") as log_file:
-        tic = (len(log_file.readlines())-1) // 2
-        
-    return tic
+    with open(log_file_path, "r", encoding="UTF-8") as log_file:
+        return (len(log_file.readlines()) - 1) // 2
 
 def log_message(level: bool, message: str, log_file: str, module_name: str):
     """将消息记录到日志文件 
@@ -39,10 +37,9 @@ def log_message(level: bool, message: str, log_file: str, module_name: str):
     try:
         with open(log_file, 'a', encoding='utf-8') as log_file:
             log_file.write(log_entry)
-    except Exception as e:  # 更通用的异常捕获
+    except Exception as e:
         with open(log_file, 'a', encoding='utf-8') as log_file:
-            log_message(1, f"Error happened: {e}", log_file, "log_config.py") 
-
+            log_file.write(f"{timestamp} [ERROR] Error happened: {e} (log_config.py)\n")
 
 def err_dispose(log_path: str, err_log_path: str, clear_count: int): 
     """错误日志处理函数，将错误日志写入到单独的文件中，并删除原始日志文件
@@ -52,17 +49,17 @@ def err_dispose(log_path: str, err_log_path: str, clear_count: int):
     clear_count (int): 日志已被清理的次数 
     """
     try:
-        with open(log_path, "r",encoding="UTF-8") as log_file, open(err_log_path, "a",encoding="UTF-8") as err_log: 
+        with open(log_path, "r", encoding="UTF-8") as log_file, open(err_log_path, "a", encoding="UTF-8") as err_log: 
             for line in log_file: 
-                if '[WARNING]' in line: 
+                if '[WARNING]' or '[ERROR]' in line: 
                     err_log.write(line) 
             err_log.write(f"------Error logged {clear_count} time--------\n")
     except UnicodeDecodeError as e:
         log_message(1, f"Error happened: {e}", err_log_path, "log_config.py")
         with open(err_log_path, "a", encoding='utf-8') as err_log:
             err_log.write(f"------Error logged {clear_count} time--------\n")
-            
-def log_delet(log_file_path: str, err_log_path: str, clear_count: int): 
+
+def log_delete(log_file_path: str, err_log_path: str, clear_count: int): 
     """ 根据日志清理计数决定是否清理日志文件。
     参数: 
     log_file_path (str): 日志文件的路径。 
@@ -72,9 +69,8 @@ def log_delet(log_file_path: str, err_log_path: str, clear_count: int):
     err_dispose(log_file_path, err_log_path, clear_count)
     with open(log_file_path, "w") as log_file: 
         pass # 清空文件 
-    log_message(1, f"Log cleared automatically. Log clear count: {clear_count}", open(log_file_path, "a"), "main.py")
 
-def log_clear_tic_get(err_log_path: str):
+def log_clear_tic_get(err_log_path: str) -> int:
     """获取日志清理计数
     Returns: 
     int: 日志已被清理的次数
@@ -93,6 +89,6 @@ def log_clear_tic_get(err_log_path: str):
     return return_tic
 
 if __name__ == "__main__":
-    log_conuter("wifi_reconnect_log.txt")
+    log_counter("wifi_reconnect_log.txt")
     err_dispose("wifi_reconnect_log.txt", "err_log.txt", 0)
     input("按下enter键位退出")
