@@ -1,6 +1,6 @@
 """
 -*- coding: utf-8 -*-
-@Time    : 2024/12/21 23:50
+@Time    : 2025/1/1 21:25
 @File    : wifi自动重连.py
 @autor   : Ender_Zhu
 @Software: vscode
@@ -28,22 +28,23 @@ def connect_to_wifi(ssid):
    
 def is_clash_running():
     if clash.test_process("clash-verge.exe"):
-        log_config.log_message(0, "clash is running", LOG_FILE,"main.py")
+        log_config.log_message(0, "clash is running", LOG_FILE, "main.py")
         return True
     else: 
-        log_config.log_message(1, "clash is not running", LOG_FILE,"main.py")
+        log_config.log_message(1, "clash is not running", LOG_FILE, "main.py")
         return False
+
 def main(ssid: str): 
     reconnect_count = 0 
     run_count = 0 
     log_clear_count = log_config.log_clear_tic_get(ERR_LOG_FILE)
      
     while True: 
-        #日志时间判断
+        # 日志时间判断
         t = time.localtime() 
         sleep_time = 10 if 14 <= t.tm_hour or t.tm_hour <= 2 else 600
         
-        #核心
+        # 核心
         if not is_wifi_connected(): 
             print("Wi-Fi已断开连接，尝试重新连接...") 
             connect_to_wifi(ssid) 
@@ -51,35 +52,33 @@ def main(ssid: str):
             if is_wifi_connected(): 
                 print("重新连接成功。") 
                 reconnect_count += 1 
-                log_config.log_message(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", LOG_FILE,"main.py") 
+                log_config.log_message(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", LOG_FILE, "main.py") 
             else:
                 print("重新连接失败。") 
-                log_config.log_message(1, "Automatic reconnect failed.", LOG_FILE,"main.py")
+                log_config.log_message(1, "Automatic reconnect failed.", LOG_FILE, "main.py")
         else: 
             print("Wi-Fi已连接。") 
-            log_config.log_message(0, "Wi-Fi is connection", LOG_FILE,"main.py") 
+            log_config.log_message(0, "Wi-Fi is connected", LOG_FILE, "main.py") 
         
         run_count += 1 
-        log_config.log_message(0, f"Run count: {run_count}", LOG_FILE,"main.py")
+        log_config.log_message(0, f"Run count: {run_count}", LOG_FILE, "main.py")
         
-        if run_count % 3 == 0:
-            if not is_clash_running():
-                clash.start_process("C:\\Program Files\\Clash Verge\\clash-verge.exe")
+        if run_count % 3 == 0 and not is_clash_running():
+            clash.start_process("C:\\Program Files\\Clash Verge\\clash-verge.exe")
         
-        #显示
+        # 显示
         print(f"重连次数: {reconnect_count}\n") 
         print(f"运行次数: {run_count}\n") 
         print(f"运行时间: {t.tm_hour}:{t.tm_min}:{t.tm_sec}\n") 
         
-        #日志清理
+        # 日志清理
         if run_count > LOG_CLEAR_THRESHOLD: 
-            log_config.log_delet(LOG_FILE, ERR_LOG_FILE, log_clear_count) 
+            log_config.log_delete(LOG_FILE, ERR_LOG_FILE, log_clear_count) 
             log_clear_count += 1
-            log_config.log_message(1, f"Log cleared automatically. Log clear count: {log_clear_count}", LOG_FILE,"main.py")
+            log_config.log_message(1, f"Log cleared automatically. Log clear count: {log_clear_count}", LOG_FILE, "main.py")
             run_count = 0 # 重置运行次数 
             
         time.sleep(sleep_time) 
-
 
 if __name__ == "__main__": 
     print("启动Wi-Fi重连服务。按Ctrl+C退出。") 
