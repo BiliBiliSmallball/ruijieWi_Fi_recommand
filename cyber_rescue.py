@@ -1,3 +1,12 @@
+"""
+-*- coding: utf-8 -*-
+@Time    : 2025/1/1 21:25
+@File    : cyber_rescue.py
+@autor   : Ender_Zhu
+@Software: vscode
+@Desc    : 程序的主函数，Wi-Fi自动重连和检测的脚本。
+"""
+
 import os
 import subprocess
 import requests
