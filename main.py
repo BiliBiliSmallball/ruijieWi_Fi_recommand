@@ -33,8 +33,21 @@ def is_clash_running():
     else: 
         log_config.log_message(1, "clash is not running", LOG_FILE, "main.py")
         return False
+    
+def attempt_connection(ssid_list: list) -> bool:
+    # 尝试连接到Wi-Fi网络
+    for ssid in ssid_list:
+        print(f"Attempting to connect to {ssid}...")
+        if connect_to_wifi(ssid):
+            print(f"Connected to {ssid}.")
+            log_config.log_message(0,f"[INFO]Successfully connected to {ssid}.", LOG_FILE, "main.py")
+            return True
+        else:
+            print(f"Failed to connect to {ssid}.")
+            log_config.log_message(1,f"Failed to connect to {ssid}.", LOG_FILE, "main.py")
+            return False
 
-def main(ssid: str): 
+def main(ssid_list: list): 
     reconnect_count = 0 
     run_count = 0 
     log_clear_count = log_config.log_clear_tic_get(ERR_LOG_FILE)
@@ -47,9 +60,7 @@ def main(ssid: str):
         # 核心
         if not is_wifi_connected(): 
             print("Wi-Fi已断开连接，尝试重新连接...") 
-            connect_to_wifi(ssid) 
-            time.sleep(5) 
-            if is_wifi_connected(): 
+            if attempt_connection(ssid_list):
                 print("重新连接成功。") 
                 reconnect_count += 1 
                 log_config.log_message(1, f"Automatic reconnect successful. Reconnect count: {reconnect_count}", LOG_FILE, "main.py") 
@@ -82,9 +93,9 @@ def main(ssid: str):
 
 if __name__ == "__main__": 
     print("启动Wi-Fi重连服务。按Ctrl+C退出。") 
-    ssid = 'gtxy_wifi' # 替换为你的Wi-Fi网络名称 
+    ssid_list = ['gtxy_wifi',] # 替换为你的Wi-Fi网络名称 
     try: 
-        main(ssid) 
+        main(ssid_list) 
     except KeyboardInterrupt:
         print("\n停止服务") 
         log_config.log_message(1, "The script is terminated by the user\n---------------------------------------", LOG_FILE,"main.py")
